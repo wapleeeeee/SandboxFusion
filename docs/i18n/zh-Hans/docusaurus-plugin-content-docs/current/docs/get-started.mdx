@@ -90,6 +90,12 @@ docker run -it -p 8080:8080 { constants.image }
 
 ### 代码沙盒
 
+:::tip
+
+{ constants.host }/playground/sandbox.html 提供了一个简单的测试页面
+
+:::
+
 在shell中执行下面的指令来请求沙盒执行一段python代码：
 
 export const snippet1 = String.raw`curl '${ constants.host }/run_code' \
@@ -170,6 +176,12 @@ print(json.dumps(response.json(), indent=2))
 ```
 
 ### 数据集
+
+:::tip
+
+{ constants.host }/playground/oj.html  提供了一个简单的测试页面
+
+:::
 
 Datasets模块实现了各类不同Code数据集的判断逻辑，并提供了统一的接口。 以MBPP数据集为例，下面是通过沙盒服务给模型输出做评估的流程：
 

@@ -90,6 +90,12 @@ docker run -it -p 8080:8080 { constants.image }
 
 ### Code Sandbox
 
+:::tip
+
+You can find a simple playground page at { constants.host }/playground/sandbox.html
+
+:::
+
 Execute the following command in the shell to request the sandbox to run a Python code snippet:
 
 export const snippet1 = String.raw`curl '${ constants.host }/run_code' \
@@ -170,6 +176,12 @@ Sample output:
 ```
 
 ### Datasets
+
+:::tip
+
+You can find a simple playground page at { constants.host }/playground/oj.html
+
+:::
 
 The Datasets module implements evaluation logic for various code datasets and provides a unified interface. Using the MBPP dataset as an example, here's the process of evaluating model outputs through the sandbox service:
 
