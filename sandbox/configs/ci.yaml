@@ -1,0 +1,17 @@
+online_judge:
+  database:
+    backend:
+      type: none
+    cache:
+      path: memory
+      sources:
+        - type: local
+          path: sandbox/tests/datasets/samples
+  max_runner_concurrency: 3
+runner:
+  isolation: lite
+  cleanup_process: false
+  restore_bash: false
+  max_concurrency: 0  # concurrency in ci is limited by pytest-xdist
+common:
+  logging_color: true
