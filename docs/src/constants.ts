@@ -25,12 +25,26 @@ const datasets = {
     CommonOJ: {
         datasets: [
             {
-                id: 'code_contests',
+                id: 'code_contests_train',
                 huggingFace: {
-                    id: 'sine/FusedHumanEvalPython',
+                    id: 'sine/FusedCodeContests',
+                    split: 'train',
+                },
+            },
+            {
+                id: 'code_contests_valid',
+                huggingFace: {
+                    id: 'sine/FusedCodeContests',
+                    split: 'valid',
+                },
+            },
+            {
+                id: 'code_contests_test',
+                huggingFace: {
+                    id: 'sine/FusedCodeContests',
                     split: 'test',
                 },
-            }
+            },
         ]
     },
 }
