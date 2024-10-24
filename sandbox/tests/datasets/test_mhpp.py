@@ -27,46 +27,6 @@ from sandbox.server.server import app
 client = TestClient(app)
 
 
-class utils_coding:
-
-    @staticmethod
-    def pass_at_k_v2(samples, n: int, k: int) -> float:
-        import numpy
-
-        def codex_estimator(n: int, c: int, k: int) -> float:
-            """
-            Calculates 1 - comb(n - c, k) / comb(n, k).
-            """
-            if n - c < k:
-                return 1.0
-            return 1.0 - numpy.prod(1.0 - k / numpy.arange(n - c + 1, n + 1))
-
-        from collections import defaultdict
-        """ Compute Pass@k metric.
-            Args:
-                samples: list of (task_name/id, passed) pair
-                n: total sample times
-            Returns:
-                final average Pass@k score
-        """
-        correct_dict = defaultdict(int)
-        for name, passed in samples:
-            if passed:
-                correct_dict[name] += 1
-            else:
-                correct_dict[name] += 0
-
-        final_scores = []
-        for _, c in correct_dict.items():
-            score = codex_estimator(n, c, k)
-            final_scores.append(score)
-        if final_scores:
-            final_score = sum(final_scores) / len(final_scores)
-        else:
-            final_score = 0.0  # empty case
-
-        return final_score
-
 
 async def test_mhpp_get():
     request = GetPromptsRequest(dataset='mhpp', config=TestConfig())
@@ -117,7 +77,7 @@ async def test_mhpp_submit_failed():
                             config=TestConfig(language='python'),
                             completion='''
 xxassssasxxzzwqqww
-def sintao(sss):
+def formula(sss):
     return 0
 
 def table_tennis_results(marks: str)
@@ -137,7 +97,7 @@ async def test_mhpp_get_metric_function():
     result = GetMetricsFunctionResult(**response.json())
     repeats = 1
     k_targets = [1, 10]
-    ctx = {'repeats': repeats, 'k_targets': k_targets, 'utils_coding': utils_coding}
+    ctx = {'repeats': repeats, 'k_targets': k_targets}
     exec(result.function, ctx, ctx)
     get_metrics = ctx['get_metrics']
     test_es = EvalResult(id=0,
