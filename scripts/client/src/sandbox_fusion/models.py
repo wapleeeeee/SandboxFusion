@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from enum import Enum
-from typing import Dict, Literal, Optional, List, Any, TYPE_CHECKING
+from typing import Dict, Literal, Optional, List, Any, Union, TYPE_CHECKING
 if TYPE_CHECKING:
     from pydantic.v1 import BaseModel, Field
 else:
@@ -153,7 +153,7 @@ class SummaryMapping(BaseModel):
 
 
 class Prompt(BaseModel):
-    id: int | str
+    id: Union[int, str]
     prompt: str
     labels: Dict[str, Any] = {}
 
@@ -175,7 +175,7 @@ class TestConfig(BaseModel):
     compile_timeout: Optional[float] = None
     run_timeout: Optional[float] = None
     custom_extract_logic: Optional[str] = None
-    provided_data: Optional[List[Dict[str, str | int]] | Dict[str, str | int]] = None
+    provided_data: Optional[Union[List[Dict[str, Union[str, int]]], Dict[str, Union[str, int]]]] = None
     extra: Dict[str, Any] = {}
 
 
@@ -192,7 +192,7 @@ class EvalTestCase(BaseModel):
 
 
 class EvalResult(BaseModel):
-    id: int | str
+    id: Union[int, str]
     accepted: bool
     extracted_code: str
     full_code: Optional[str] = None
@@ -212,12 +212,12 @@ class GetPromptsRequest(BaseModel):
 class GetPromptByIdRequest(BaseModel):
     dataset: str
     config: TestConfig
-    id: int | str
+    id: Union[int, str]
 
 
 class SubmitRequest(BaseModel):
     dataset: str
-    id: int | str
+    id: Union[int, str]
     completion: str
     config: TestConfig
 
