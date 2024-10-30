@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import inspect
-import json
 from typing import Any, Dict, List
 
 from sandbox.database import get_row_by_id_in_table, get_rows_in_table
@@ -29,6 +28,7 @@ from sandbox.datasets.types import (
     SubmitRequest,
     TestConfig,
 )
+from sandbox.utils.common import ensure_json
 from sandbox.utils.extraction import default_extract_helper
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
@@ -80,14 +80,14 @@ class MHPPDataset(CodingDataset, dataset_ids=['mhpp']):
             prompt = row['content']
         prompt = prompt[:prompt.rfind('"""')]
         prompt = f'{prompt}\n    e.g. {test} """'
-        return Prompt(id=row['id'], prompt=prompt, labels=json.loads(row['labels']))
+        return Prompt(id=row['id'], prompt=prompt, labels=ensure_json(row, 'labels'))
 
     @classmethod
     async def evaluate_single(cls, request: SubmitRequest) -> EvalResult:
         row = await get_row_by_id_in_table(request,
                                            cls.get_table_name(request.dataset),
                                            columns=['id', 'content', 'test', 'labels'])
-        row['labels'] = json.loads(row['labels'])
+        ensure_json(row, 'labels')
         test = row['test']
 
         code = default_extract_helper(request.completion, 'python', request.config.custom_extract_logic)

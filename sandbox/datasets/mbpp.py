@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 from typing import Any, Dict, List
 
 from sandbox.database import get_row_by_id_in_table, get_rows_in_table
@@ -28,6 +27,7 @@ from sandbox.datasets.types import (
     SubmitRequest,
     TestConfig,
 )
+from sandbox.utils.common import ensure_json
 from sandbox.utils.extraction import default_extract_helper
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
@@ -59,18 +59,18 @@ class MBPPDataset(CodingDataset, dataset_ids=['mbpp']):
 
     @classmethod
     def _generate_single_prompt(cls, row: Dict[str, Any], config: TestConfig) -> Prompt:
-        tests = json.loads(row['test'])
+        tests = ensure_json(row, 'test')
         test = '\n'.join(tests[:1])
         prompt = f"{row['content']} Your code should satisfy these tests:\n\n{test}"
-        return Prompt(id=row['id'], prompt=prompt, labels=json.loads(row['labels']))
+        return Prompt(id=row['id'], prompt=prompt, labels=ensure_json(row, 'labels'))
 
     @classmethod
     async def evaluate_single(cls, request: SubmitRequest) -> EvalResult:
         row = await get_row_by_id_in_table(request,
                                            cls.get_table_name(request.dataset),
                                            columns=['id', 'content', 'test', 'labels'])
-        row['labels'] = json.loads(row['labels'])
-        tests = json.loads(row['test'])
+        ensure_json(row, 'labels')
+        tests = ensure_json(row, 'test')
         test = '\n'.join(tests)
 
         code = default_extract_helper(request.completion, 'python', request.config.custom_extract_logic)
