@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from .client import run_code, run_jupyter, summary_run_code_result, get_prompts, get_prompt_by_id, submit, \
-    submit_safe, set_endpoint
+    submit_safe, set_endpoint, set_dataset_endpoint, set_sandbox_endpoint
 from .models import RunCodeRequest, RunCodeResponse, EvalResult, \
     GetPromptByIdRequest, GetPromptsRequest, Prompt, SubmitRequest, \
     CommandRunStatus, RunJupyterRequest, RunJupyterResponse, RunStatus, \
@@ -21,7 +21,7 @@ from .models import RunCodeRequest, RunCodeResponse, EvalResult, \
 
 __all__ = [
     'run_code', 'run_jupyter', 'summary_run_code_result', 'get_prompts', 'get_prompt_by_id', 'submit',
-    'set_endpoint', 'RunCodeRequest',
+    'set_endpoint', 'set_dataset_endpoint', 'set_sandbox_endpoint', 'RunCodeRequest',
     'RunCodeResponse', 'EvalResult', 'GetPromptByIdRequest', 'GetPromptsRequest', 'Prompt', 'SubmitRequest',
     'CommandRunStatus', 'RunJupyterRequest', 'RunJupyterResponse', 'RunStatus', 'SummaryMapping', 'submit_safe',
     'TestConfig'

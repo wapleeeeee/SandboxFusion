@@ -25,13 +25,27 @@ from .models import RunCodeRequest, RunCodeResponse, EvalResult, \
     CommandRunStatus, RunJupyterRequest, RunJupyterResponse, RunStatus, SummaryMapping
 
 SANDBOX_ENDPOINT = os.environ.get('SANDBOX_FUSION_ENDPOINT', 'http://localhost:8000')
+# dataset services have different patterns compared to sandbox services, thus we may
+# need to access these 2 sets of apis separately.
+DATASET_ENDPOINT = SANDBOX_ENDPOINT
 
 logger = logging.getLogger(__name__)
 
 
 def set_endpoint(endpoint: str):
+    global SANDBOX_ENDPOINT, DATASET_ENDPOINT
+    SANDBOX_ENDPOINT = endpoint
+    DATASET_ENDPOINT = endpoint
+
+
+def set_sandbox_endpoint(endpoint: str):
     global SANDBOX_ENDPOINT
     SANDBOX_ENDPOINT = endpoint
+
+
+def set_dataset_endpoint(endpoint: str):
+    global DATASET_ENDPOINT
+    DATASET_ENDPOINT = endpoint
 
 
 def on_retry_error(s):
@@ -121,7 +135,7 @@ def run_jupyter(request: RunJupyterRequest, endpoint: str = '', max_attempts: in
 
 
 def get_prompts(request: GetPromptsRequest, endpoint: str = '') -> List[Prompt]:
-    result = requests.post(f'{endpoint or SANDBOX_ENDPOINT}/get_prompts', json=request.dict())
+    result = requests.post(f'{endpoint or DATASET_ENDPOINT}/get_prompts', json=request.dict())
     if result.status_code != 200:
         raise Exception(f'Faas api responded with code {result.status_code}: {result.text}')
     resp = [Prompt(**r) for r in result.json()]
@@ -129,7 +143,7 @@ def get_prompts(request: GetPromptsRequest, endpoint: str = '') -> List[Prompt]:
 
 
 def get_prompt_by_id(request: GetPromptByIdRequest, endpoint: str = '') -> Prompt:
-    result = requests.post(f'{endpoint or SANDBOX_ENDPOINT}/get_prompt_by_id', json=request.dict())
+    result = requests.post(f'{endpoint or DATASET_ENDPOINT}/get_prompt_by_id', json=request.dict())
     if result.status_code != 200:
         raise Exception(f'Faas api responded with code {result.status_code}: {result.text}')
     resp = Prompt(**result.json())
@@ -140,7 +154,7 @@ def submit(request: SubmitRequest, endpoint: str = '', max_attempts: int = 5) ->
 
     @configurable_retry(max_attempts)
     def _submit(request: SubmitRequest) -> EvalResult:
-        result = requests.post(f'{endpoint or SANDBOX_ENDPOINT}/submit', json=request.dict())
+        result = requests.post(f'{endpoint or DATASET_ENDPOINT}/submit', json=request.dict())
         if result.status_code != 200:
             raise Exception(f'Faas api responded with code {result.status_code}: {result.text}')
         resp = EvalResult(**result.json())
