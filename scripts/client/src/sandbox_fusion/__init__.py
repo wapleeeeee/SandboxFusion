@@ -18,11 +18,32 @@ from .models import RunCodeRequest, RunCodeResponse, EvalResult, \
     GetPromptByIdRequest, GetPromptsRequest, Prompt, SubmitRequest, \
     CommandRunStatus, RunJupyterRequest, RunJupyterResponse, RunStatus, \
     SummaryMapping, TestConfig
+from .common import run_concurrent, run_concurrent_pure
 
 __all__ = [
-    'run_code', 'run_jupyter', 'summary_run_code_result', 'get_prompts', 'get_prompt_by_id', 'submit',
-    'set_endpoint', 'set_dataset_endpoint', 'set_sandbox_endpoint', 'RunCodeRequest',
-    'RunCodeResponse', 'EvalResult', 'GetPromptByIdRequest', 'GetPromptsRequest', 'Prompt', 'SubmitRequest',
-    'CommandRunStatus', 'RunJupyterRequest', 'RunJupyterResponse', 'RunStatus', 'SummaryMapping', 'submit_safe',
-    'TestConfig'
+    'run_code',
+    'run_jupyter',
+    'summary_run_code_result',
+    'get_prompts',
+    'get_prompt_by_id',
+    'submit',
+    'set_endpoint',
+    'set_dataset_endpoint',
+    'set_sandbox_endpoint',
+    'RunCodeRequest',
+    'RunCodeResponse',
+    'EvalResult',
+    'GetPromptByIdRequest',
+    'GetPromptsRequest',
+    'Prompt',
+    'SubmitRequest',
+    'CommandRunStatus',
+    'RunJupyterRequest',
+    'RunJupyterResponse',
+    'RunStatus',
+    'SummaryMapping',
+    'submit_safe',
+    'TestConfig',
+    'run_concurrent',
+    'run_concurrent_pure',
 ]
