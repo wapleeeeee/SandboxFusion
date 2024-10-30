@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import hashlib
-import json
 from typing import Any, Dict, List
 
 from transformers import AutoTokenizer
@@ -31,6 +30,7 @@ from sandbox.datasets.types import (
     SubmitRequest,
     TestConfig,
 )
+from sandbox.utils.common import ensure_json
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
 
@@ -129,7 +129,7 @@ class RepobenchPDataset(CodingDataset, dataset_ids=['repobench_p_python', 'repob
         )
         for r in rows:
             r['lang'] = request.dataset.split("_")[-1]
-            r['context'] = json.loads(r['context'])
+            ensure_json(r, 'context')
         return [cls._generate_single_prompt(r, request.config) for r in rows]
 
     @classmethod
@@ -140,7 +140,7 @@ class RepobenchPDataset(CodingDataset, dataset_ids=['repobench_p_python', 'repob
             columns=['id', 'file_path', 'context', 'import_statement', "code", "gold_snippet_index", "next_line"])
 
         row['lang'] = request.dataset.split("_")[-1]
-        row['context'] = json.loads(row['context'])
+        ensure_json(row, 'context')
         return cls._generate_single_prompt(row, request.config)
 
     @classmethod

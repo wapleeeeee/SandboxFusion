@@ -30,6 +30,7 @@ from sandbox.datasets.types import (
     SubmitRequest,
     TestConfig,
 )
+from sandbox.utils.common import ensure_json
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
 
@@ -176,13 +177,13 @@ class NaturalCodeBenchDataset(CodingDataset,
     @classmethod
     def _generate_single_prompt(cls, row: Dict[str, Any], config: TestConfig) -> Prompt:
         prompt = row['content']
-        return Prompt(id=row['id'], prompt=prompt, labels=json.loads(row['labels']))
+        return Prompt(id=row['id'], prompt=prompt, labels=ensure_json(row, 'labels'))
 
     @classmethod
     async def evaluate_single(cls, request: SubmitRequest) -> EvalResult:
         row = await get_row_by_id_in_table(request, cls.get_table_name(request.dataset), columns=['test', 'labels'])
-        row['labels'] = json.loads(row['labels'])
-        row['test'] = json.loads(row['test'])
+        ensure_json(row, 'labels')
+        ensure_json(row, 'test')
         asset = row['test'].get('asset')
         if isinstance(asset, dict):
             asset = asset

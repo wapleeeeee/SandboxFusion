@@ -32,6 +32,7 @@ from sandbox.datasets.types import (
     SubmitRequest,
     TestConfig,
 )
+from sandbox.utils.common import ensure_json
 from sandbox.utils.extraction import default_extract_helper
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
@@ -1013,7 +1014,7 @@ class LiveCodeBenchDataset(CodingDataset, dataset_ids=['live_code_bench_v1']):
         prompt = row['content']
         if config.is_fewshot:
             prompt = cls._generate_fewshot_prompt(prompt)
-        return Prompt(id=row['id'], prompt=prompt, labels=json.loads(row['labels']))
+        return Prompt(id=row['id'], prompt=prompt, labels=ensure_json(row, 'labels'))
 
     @classmethod
     async def evaluate_single(cls, request: SubmitRequest) -> EvalResult:
@@ -1022,10 +1023,10 @@ class LiveCodeBenchDataset(CodingDataset, dataset_ids=['live_code_bench_v1']):
             cls.get_table_name(request.dataset),
             columns=['id', 'labels', 'content', 'test'],
         )
-        labels = json.loads(row['labels'])
+        labels = ensure_json(row, 'labels')
         timeout = request.config.run_timeout or 6
         try:
-            test_cases = json.loads(row['test'])
+            test_cases = ensure_json(row, 'test')
         except:
             test_cases = pickle.loads(zlib.decompress(base64.b64decode(row['test'])))
         test_cnt = len(json.loads(test_cases['input_output'])['inputs'])

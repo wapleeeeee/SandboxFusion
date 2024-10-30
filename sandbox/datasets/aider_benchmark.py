@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import base64
-import json
 from typing import Any, Dict, List
 
 from sandbox.database import get_row_by_id_in_table, get_rows_in_table
@@ -29,6 +28,7 @@ from sandbox.datasets.types import (
     SubmitRequest,
     TestConfig,
 )
+from sandbox.utils.common import ensure_json
 from sandbox.utils.extraction import default_extract_helper
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
@@ -66,7 +66,7 @@ class AiderBenchmarkDataset(CodingDataset, dataset_ids=['aider_benchmark_v1']):
         wrap_prompt_res = 'Your response here:'
 
         question = row['content']
-        labels = json.loads(row['labels'])
+        labels = ensure_json(row, 'labels')
         reference = labels['reference']
         prompt = f"""
 {question}
@@ -90,8 +90,7 @@ Please generate the code in the following format:
             cls.get_table_name(request.dataset),
             columns=['id', 'labels', 'content', 'test'],
         )
-        labels = json.loads(row['labels'])
-        test = json.loads(row['test'])
+        test = ensure_json(row, 'test')
         test_code = test['code']
         asset = test['asset']
         real_test_code = [base64.b64decode(x).decode('utf-8') for x in asset.values()]

@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import re
 from typing import Any, Dict, List
 
@@ -31,6 +30,7 @@ from sandbox.datasets.types import (
     SubmitRequest,
     TestConfig,
 )
+from sandbox.utils.common import ensure_json
 from sandbox.utils.extraction import default_extract_helper
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
@@ -181,13 +181,13 @@ class MiniF2FLean4Dataset(CodingDataset, dataset_ids=['minif2f_lean4_test', 'min
                 prefix = 'Please finish the following theorem in Lean4:'
             prompt = f"{prefix}\n\n```lean\n{row['content']}\n```"
 
-        return Prompt(id=row['id'], prompt=prompt, labels=json.loads(row['labels']))
+        return Prompt(id=row['id'], prompt=prompt, labels=ensure_json(row, 'labels'))
 
     @classmethod
     async def evaluate_single(cls, request: SubmitRequest) -> EvalResult:
         columns = cls._get_dataset_columns(request.config)
         row = await get_row_by_id_in_table(request, cls.get_table_name(request.dataset), columns=columns)
-        row['labels'] = json.loads(row['labels'])
+        ensure_json(row, 'labels')
         completion = request.completion
 
         # if question_id is in the completion, we assume the response contains a complete lean code.

@@ -29,6 +29,7 @@ from sandbox.datasets.types import (
     SubmitRequest,
     TestConfig,
 )
+from sandbox.utils.common import ensure_json
 from sandbox.utils.extraction import extract_code_from_freeform_completion_v2
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
@@ -51,7 +52,7 @@ class VerilogDataset(CodingDataset, dataset_ids=['verilogeval_human', 'verilogev
             columns=['id', 'code_preface', 'description', "labels"],
         )
         for row in rows:
-            row['labels'] = json.loads(row['labels'])
+            ensure_json(row, 'labels')
         return [cls._generate_single_prompt(r, request.config) for r in rows]
 
     @classmethod
@@ -59,7 +60,7 @@ class VerilogDataset(CodingDataset, dataset_ids=['verilogeval_human', 'verilogev
         row = await get_row_by_id_in_table(request,
                                            cls.get_table_name(request.dataset),
                                            columns=['id', 'code_preface', 'description', "labels"])
-        row['labels'] = json.loads(row['labels'])
+        ensure_json(row, 'labels')
         return cls._generate_single_prompt(row, request.config)
 
     @staticmethod

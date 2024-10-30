@@ -17,6 +17,7 @@ from enum import Enum
 from typing import Any, Dict, List, Literal, Optional
 
 from sandbox.database import get_row_by_id_in_table, get_rows_in_table
+from sandbox.utils.common import ensure_json
 from sandbox.datasets.types import (
     CodingDataset,
     EvalResult,
@@ -81,7 +82,7 @@ class MBXPDataset(CodingDataset,
             columns=['id', 'labels', 'content'],
         )
         for row in rows:
-            row['labels'] = json.loads(row['labels'])
+            row['labels'] = ensure_json(row, 'labels')
         prompt_language = 'en' if '_en' in request.dataset else 'zh'
         return [cls._generate_single_prompt(r, request.config, prompt_language) for r in rows]
 
@@ -90,7 +91,7 @@ class MBXPDataset(CodingDataset,
         row = await get_row_by_id_in_table(request,
                                            cls.get_table_name(request.dataset),
                                            columns=['id', 'labels', 'content'])
-        row['labels'] = json.loads(row['labels'])
+        ensure_json(row, 'labels')
         prompt_language = 'en' if '_en' in request.dataset else 'zh'
         return cls._generate_single_prompt(row, request.config, prompt_language)
 
@@ -160,7 +161,7 @@ class MBXPDataset(CodingDataset,
         row = await get_row_by_id_in_table(GetPromptByIdRequest(dataset=table_name, config=TestConfig(), id=id),
                                            cls.get_table_name(table_name),
                                            columns=['canonical_solution', 'labels'])
-        row['labels'] = json.loads(row['labels'])
+        ensure_json(row, 'labels')
         return row['canonical_solution'], row['labels']['programming_language']
 
     @staticmethod
@@ -191,8 +192,8 @@ class MBXPDataset(CodingDataset,
     @classmethod
     async def evaluate_single(cls, request: SubmitRequest) -> EvalResult:
         row = await get_row_by_id_in_table(request, cls.get_table_name(request.dataset), columns=['test', 'labels'])
-        row['labels'] = json.loads(row['labels'])
-        row['test'] = json.loads(row['test'])
+        ensure_json(row, 'labels')
+        ensure_json(row, 'test')
         asset = row['test'].get('asset')
         if isinstance(asset, dict):
             asset = asset

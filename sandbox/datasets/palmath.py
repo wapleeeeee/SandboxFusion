@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import re
 from typing import Any, Dict, List
 
@@ -29,6 +28,7 @@ from sandbox.datasets.types import (
     SubmitRequest,
     TestConfig,
 )
+from sandbox.utils.common import ensure_json
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
 
@@ -77,14 +77,14 @@ class PalMathDataset(CodingDataset, dataset_ids=['palmath']):
 
     @classmethod
     def _generate_single_prompt(cls, row: Dict[str, Any], config: TestConfig) -> Prompt:
-        return Prompt(id=row['id'], prompt=row['content'], labels=json.loads(row['labels']))
+        return Prompt(id=row['id'], prompt=row['content'], labels=ensure_json(row, 'labels'))
 
     @classmethod
     async def evaluate_single(cls, request: SubmitRequest) -> EvalResult:
         row = await get_row_by_id_in_table(request, cls.get_table_name(request.dataset), columns=['test'])
         code = extract_python_block_with_solution(request.completion)
         full_code = cls.TEST_CODE.replace('#<INSERT>', code)
-        asset = json.loads(row['test'])['asset']
+        asset = ensure_json(row, 'test')['asset']
         result = await run_code_in_sandbox(
             RunCodeRequest(
                 code=full_code,
