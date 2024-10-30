@@ -1,6 +1,6 @@
 [project]
 name = "sandbox-fusion"
-version = "0.2.0"
+version = "0.2.1"
 description = "Client package of Sandbox Fusion service"
 requires-python = ">=3.7"
 authors = [
