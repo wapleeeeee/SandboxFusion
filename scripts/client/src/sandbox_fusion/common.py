@@ -51,6 +51,9 @@ def run_concurrent(func: Callable,
     if len(args) != len(kwargs):
         raise ValueError("Length of args must equal length of kwargs")
 
+    if len(args) == 0:
+        return []
+
     wrapped_funcs = (partial(func, *a, **k) for a, k in zip(args, kwargs))
 
     return run_concurrent_pure(wrapped_funcs, concurrency)

@@ -55,8 +55,11 @@ def on_retry_error(s):
 
 
 def before_retry_sleep(s):
-    logger.warning(
-        f'error requesting sandbox for {s.attempt_number} time(s), will retry... error: {s.outcome.exception()}')
+    msg = f'error requesting sandbox for {s.attempt_number} time(s), will retry... error: {s.outcome.exception()}'
+    if s.attempt_number > 2:
+        logger.warning(msg)
+    else:
+        logger.debug(msg)
 
 
 def configurable_retry(max_attempts):
