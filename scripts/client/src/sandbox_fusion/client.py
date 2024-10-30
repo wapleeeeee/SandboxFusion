@@ -27,7 +27,7 @@ from .models import RunCodeRequest, RunCodeResponse, EvalResult, \
 SANDBOX_ENDPOINT = os.environ.get('SANDBOX_FUSION_ENDPOINT', 'http://localhost:8000')
 # dataset services have different patterns compared to sandbox services, thus we may
 # need to access these 2 sets of apis separately.
-DATASET_ENDPOINT = SANDBOX_ENDPOINT
+DATASET_ENDPOINT = os.environ.get('SANDBOX_FUSION_DATASET_ENDPOINT', SANDBOX_ENDPOINT)
 
 logger = logging.getLogger(__name__)
 
