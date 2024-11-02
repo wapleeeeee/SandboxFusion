@@ -1,6 +1,6 @@
 [project]
 name = "sandbox-fusion"
-version = "0.1.1"
+version = "0.3.1"
 description = "Client package of Sandbox Fusion service"
 requires-python = ">=3.7"
 authors = [
@@ -16,6 +16,7 @@ dependencies = [
     "requests>=2.0.0",
     "tenacity>=8.0.0",
     "pydantic>=1.0.0",
+    "aiohttp>=3.0.0",
 ]
 
 [tool.yapf]

@@ -13,9 +13,9 @@
 # limitations under the License.
 
 import logging
-import os
 from typing import List
 from functools import wraps
+import asyncio
 
 import requests
 from tenacity import retry, stop_after_attempt, wait_exponential_jitter
@@ -23,15 +23,22 @@ from tenacity import retry, stop_after_attempt, wait_exponential_jitter
 from .models import RunCodeRequest, RunCodeResponse, EvalResult, \
     GetPromptByIdRequest, GetPromptsRequest, Prompt, SubmitRequest, \
     CommandRunStatus, RunJupyterRequest, RunJupyterResponse, RunStatus, SummaryMapping
-
-SANDBOX_ENDPOINT = os.environ.get('SANDBOX_FUSION_ENDPOINT', 'http://localhost:8000')
+from . import config
 
 logger = logging.getLogger(__name__)
 
 
 def set_endpoint(endpoint: str):
-    global SANDBOX_ENDPOINT
-    SANDBOX_ENDPOINT = endpoint
+    config.SANDBOX_ENDPOINT = endpoint
+    config.DATASET_ENDPOINT = endpoint
+
+
+def set_sandbox_endpoint(endpoint: str):
+    config.SANDBOX_ENDPOINT = endpoint
+
+
+def set_dataset_endpoint(endpoint: str):
+    config.DATASET_ENDPOINT = endpoint
 
 
 def on_retry_error(s):
@@ -41,8 +48,11 @@ def on_retry_error(s):
 
 
 def before_retry_sleep(s):
-    logger.warning(
-        f'error requesting sandbox for {s.attempt_number} time(s), will retry... error: {s.outcome.exception()}')
+    msg = f'error requesting sandbox for {s.attempt_number} time(s), will retry... error: {s.outcome.exception()}'
+    if s.attempt_number > 2:
+        logger.warning(msg)
+    else:
+        logger.debug(msg)
 
 
 def configurable_retry(max_attempts):
@@ -54,10 +64,18 @@ def configurable_retry(max_attempts):
                stop=stop_after_attempt(max_attempts),
                before_sleep=before_retry_sleep,
                retry_error_callback=on_retry_error)
-        def wrapper(*args, **kwargs):
+        async def async_wrapper(*args, **kwargs):
+            return await func(*args, **kwargs)
+
+        @wraps(func)
+        @retry(wait=wait_exponential_jitter(),
+               stop=stop_after_attempt(max_attempts),
+               before_sleep=before_retry_sleep,
+               retry_error_callback=on_retry_error)
+        def sync_wrapper(*args, **kwargs):
             return func(*args, **kwargs)
 
-        return wrapper
+        return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
 
     return decorator
 
@@ -66,7 +84,7 @@ def run_code(request: RunCodeRequest, endpoint: str = '', max_attempts: int = 5)
 
     @configurable_retry(max_attempts)
     def _run_code(request: RunCodeRequest) -> RunCodeResponse:
-        result = requests.post(f'{endpoint or SANDBOX_ENDPOINT}/run_code', json=request.dict())
+        result = requests.post(f'{endpoint or config.SANDBOX_ENDPOINT}/run_code', json=request.dict())
         if result.status_code != 200:
             raise Exception(f'Faas api responded with code {result.status_code}: {result.text}')
         resp = RunCodeResponse(**result.json())
@@ -109,7 +127,7 @@ def run_jupyter(request: RunJupyterRequest, endpoint: str = '', max_attempts: in
 
     @configurable_retry(max_attempts)
     def _run_jupyter(request: RunJupyterRequest) -> RunJupyterResponse:
-        result = requests.post(f'{endpoint or SANDBOX_ENDPOINT}/run_jupyter', json=request.dict())
+        result = requests.post(f'{endpoint or config.SANDBOX_ENDPOINT}/run_jupyter', json=request.dict())
         if result.status_code != 200:
             raise Exception(f'Faas api responded with code {result.status_code}: {result.text}')
         resp = RunJupyterResponse(**result.json())
@@ -121,7 +139,7 @@ def run_jupyter(request: RunJupyterRequest, endpoint: str = '', max_attempts: in
 
 
 def get_prompts(request: GetPromptsRequest, endpoint: str = '') -> List[Prompt]:
-    result = requests.post(f'{endpoint or SANDBOX_ENDPOINT}/get_prompts', json=request.dict())
+    result = requests.post(f'{endpoint or config.DATASET_ENDPOINT}/get_prompts', json=request.dict())
     if result.status_code != 200:
         raise Exception(f'Faas api responded with code {result.status_code}: {result.text}')
     resp = [Prompt(**r) for r in result.json()]
@@ -129,7 +147,7 @@ def get_prompts(request: GetPromptsRequest, endpoint: str = '') -> List[Prompt]:
 
 
 def get_prompt_by_id(request: GetPromptByIdRequest, endpoint: str = '') -> Prompt:
-    result = requests.post(f'{endpoint or SANDBOX_ENDPOINT}/get_prompt_by_id', json=request.dict())
+    result = requests.post(f'{endpoint or config.DATASET_ENDPOINT}/get_prompt_by_id', json=request.dict())
     if result.status_code != 200:
         raise Exception(f'Faas api responded with code {result.status_code}: {result.text}')
     resp = Prompt(**result.json())
@@ -140,7 +158,7 @@ def submit(request: SubmitRequest, endpoint: str = '', max_attempts: int = 5) ->
 
     @configurable_retry(max_attempts)
     def _submit(request: SubmitRequest) -> EvalResult:
-        result = requests.post(f'{endpoint or SANDBOX_ENDPOINT}/submit', json=request.dict())
+        result = requests.post(f'{endpoint or config.DATASET_ENDPOINT}/submit', json=request.dict())
         if result.status_code != 200:
             raise Exception(f'Faas api responded with code {result.status_code}: {result.text}')
         resp = EvalResult(**result.json())
