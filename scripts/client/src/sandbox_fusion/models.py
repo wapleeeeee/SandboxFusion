@@ -175,7 +175,7 @@ class TestConfig(BaseModel):
     compile_timeout: Optional[float] = None
     run_timeout: Optional[float] = None
     custom_extract_logic: Optional[str] = None
-    provided_data: Optional[Union[List[Dict[str, Union[str, int]]], Dict[str, Union[str, int]]]] = None
+    provided_data: Optional[Union[List[Dict[str, Any]], Dict[str, Any]]] = None
     extra: Dict[str, Any] = {}
 
 
