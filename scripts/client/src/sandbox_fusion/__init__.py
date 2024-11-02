@@ -14,6 +14,9 @@
 
 from .client import run_code, run_jupyter, summary_run_code_result, get_prompts, get_prompt_by_id, submit, \
     submit_safe, set_endpoint, set_dataset_endpoint, set_sandbox_endpoint
+from .async_client import run_code as run_code_async, run_jupyter as run_jupyter_async, \
+    get_prompts as get_prompts_async, get_prompt_by_id as get_prompt_by_id_async, submit as submit_async, \
+    submit_safe as submit_safe_async
 from .models import RunCodeRequest, RunCodeResponse, EvalResult, \
     GetPromptByIdRequest, GetPromptsRequest, Prompt, SubmitRequest, \
     CommandRunStatus, RunJupyterRequest, RunJupyterResponse, RunStatus, \
@@ -46,4 +49,10 @@ __all__ = [
     'TestConfig',
     'run_concurrent',
     'run_concurrent_pure',
+    'run_code_async',
+    'run_jupyter_async',
+    'get_prompts_async',
+    'get_prompt_by_id_async',
+    'submit_async',
+    'submit_safe_async',
 ]
