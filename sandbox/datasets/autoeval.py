@@ -204,6 +204,7 @@ class AutoEvalDataset(CodingDataset, dataset_ids=[]):
                 RunCodeRequest(
                     code=full_code,
                     language=execution_language,
+                    compile_timeout=request.config.compile_timeout or 40,
                     run_timeout=request.config.run_timeout or 20,
                     files=asset,
                 ))
