@@ -136,9 +136,9 @@ export const PromptTemplate = () => {
                 {section.name === 'Answer' && section.name + ':'}
               </div>
               <div style={{ color: '#666' }}>
-                {section.name === 'Context' && '// 上下文信息...'}
-                {section.name === 'Few-shot Example' && '// Few-shot 示例...'}
-                {section.name === 'Question' && '// 问题内容...'}
+                {section.name === 'Context' && '// context info...'}
+                {section.name === 'Few-shot Example' && '// Few-shot examples...'}
+                {section.name === 'Question' && '// question content...'}
               </div>
             </div>
             {[0].includes(index) && <div style={styles.separator} />}
