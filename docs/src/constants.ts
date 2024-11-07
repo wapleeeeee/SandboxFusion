@@ -50,7 +50,7 @@ const datasets = {
 }
 
 export const constants = {
-    image: 'vemlp-cn-beijing.cr.volces.com/preset-images/code-sandbox:opensource_20241022',
+    image: 'vemlp-cn-beijing.cr.volces.com/preset-images/code-sandbox:opensource_20241104',
     host: 'http://localhost:8080',
     datasets,
 }
