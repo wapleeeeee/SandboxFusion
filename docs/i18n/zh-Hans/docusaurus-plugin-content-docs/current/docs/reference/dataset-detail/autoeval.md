@@ -205,7 +205,7 @@ export const PromptTemplate = () => {
 
 ### 代码执行
 
-代码在执行时，存储在数据中 `test.asset` 里的文件会被[存放到沙盒运行环境所在的对应文件中](../execution-detail/common)。 `test.asset` 是个字典，key是文件名，value是base64编码后的该文件内容。
+代码在执行时，存储在数据中 `test.asset` 里的文件会被[存放到沙盒运行环境所在的对应文件中](/docs/docs/reference/execution-detail/common)。 `test.asset` 是个字典，key是文件名，value是base64编码后的该文件内容。
 
 执行代码的逻辑按照 `labels.programming_language` 分为两种情况： `java` 和 其它 。
 
@@ -213,7 +213,7 @@ export const PromptTemplate = () => {
 
 - 探测代码中所有的 Java class/enum/interface...
 - 将每个对象放在以它们的名字命名的对应文件中
-- [执行 junit](../execution-detail/java)
+- [执行 junit](/docs/docs/reference/execution-detail/java)
 
 对于所有其它语言，直接将拼接好的代码按照 `labels.execution_language` 中指定的语言执行。 每个语言对应的执行逻辑请参考[执行细节](/docs/category/execution-detail)部分。
 

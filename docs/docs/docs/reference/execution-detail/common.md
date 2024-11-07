@@ -8,7 +8,7 @@ Files passed through `files` support both absolute and relative paths. Relative 
 
 The file path rules for the `fetch_files` parameter are the same as `files`. For specific usage, refer to the [API Documentation](/docs/api/run-code-run-code-post).
 
-When executing code, the sandbox provides two different isolation modes. Configuration methods can be found [here](../config).
+When executing code, the sandbox provides two different isolation modes. Configuration methods can be found [here](/docs/docs/reference/config).
 
 A general code execution flow:
 

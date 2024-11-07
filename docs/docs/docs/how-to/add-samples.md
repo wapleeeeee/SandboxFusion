@@ -9,7 +9,7 @@ The [Using Datasets](./use-dataset/) section describes how to use an existing da
 
 For sandbox-implemented external datasets, simply refer to the input data format from the examples provided to the sandbox. The meaning of various data fields can be found in the corresponding dataset documentation.
 
-The sandbox has two original formats: the [AutoEval dataset](../reference/dataset-detail/autoeval) based on test code and the [CommonOJ dataset](../reference/dataset-detail/common-oj) based on standard input/output, which can satisfy most evaluation scenarios. Please refer to the corresponding links for their data formats.
+The sandbox has two original formats: the [AutoEval dataset](/docs/docs/reference/dataset-detail/autoeval) based on test code and the [CommonOJ dataset](/docs/docs/reference/dataset-detail/common-oj) based on standard input/output, which can satisfy most evaluation scenarios. Please refer to the corresponding links for their data formats.
 
 Below is a script that passes data through request parameters. The effective parameters in `config` are:
 

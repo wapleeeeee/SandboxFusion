@@ -8,7 +8,7 @@
 
 `fetch_files` 参数的文件路径规则于 `files` 相同，具体传入方式参考 [API文档](/docs/api/run-code-run-code-post) 。
 
-在执行代码时，沙盒提供了两种不同的隔离模式，配置方法可以参考 [这里](../config) 。
+在执行代码时，沙盒提供了两种不同的隔离模式，配置方法可以参考 [这里](/docs/docs/reference/config) 。
 
 一个较为通用的代码执行流程：
 

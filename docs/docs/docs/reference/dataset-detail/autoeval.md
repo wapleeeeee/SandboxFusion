@@ -204,7 +204,7 @@ There are some post-processing for the Go language:
 
 ### Code Execution
 
-When the code is executed, the files stored in `test.asset` in the data will be [placed in the corresponding files in the sandbox runtime environment](../execution-detail/common). `test.asset` is a dictionary, where the key is the filename and the value is the base64-encoded content of that file.
+When the code is executed, the files stored in `test.asset` in the data will be [placed in the corresponding files in the sandbox runtime environment](/docs/docs/reference/execution-detail/common). `test.asset` is a dictionary, where the key is the filename and the value is the base64-encoded content of that file.
 
 The logic for executing code is divided into two cases according to `labels.programming_language`: `java` and others.
 
@@ -212,7 +212,7 @@ For the `java` language, our testing logic is the same as [NaturalCodeBench](htt
 
 - Detect all Java class/enum/interface... in the code  
 - Place each object in the corresponding file named after their name
-- [Execute junit](../execution-detail/java)
+- [Execute junit](/docs/docs/reference/execution-detail/java)
 
 For all other languages, directly execute the concatenated code according to the language specified in `labels.execution_language`. Please refer to the [Execution Details](/docs/category/execution-detail) section for the execution logic corresponding to each language.
 

@@ -5,7 +5,7 @@
 
 This is an introduction to how to evaluate models on specific datasets.
 
-Please refer to [Types of Datasets](../../background/dataset-types) to understand the concept of datasets.
+Please refer to [Dataset Details](/docs/category/dataset-detail) to understand the concept of datasets.
 
 We provide only one implementation that is as correct as possible, but we do not guarantee that the various logics of the dataset are exactly the same as the original.
 

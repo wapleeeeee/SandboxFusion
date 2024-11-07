@@ -9,7 +9,7 @@ import { constants } from '@site/src/constants';
 
 对于沙盒实现的外部数据集，直接参考样例中输入给沙盒的数据格式即可，各种数据字段的含义参考对应的数据集。
 
-沙盒有两个原创的格式，基于测试代码的 [AutoEval 数据集](../reference/dataset-detail/autoeval)和基于标准输入输出的 [CommonOJ 数据集](../reference/dataset-detail/common-oj)，足以满足绝大部分评估场景。 其数据格式请参考对应的链接。
+沙盒有两个原创的格式，基于测试代码的 [AutoEval 数据集](/docs/docs/reference/dataset-detail/autoeval)和基于标准输入输出的 [CommonOJ 数据集](/docs/docs/reference/dataset-detail/common-oj)，足以满足绝大部分评估场景。 其数据格式请参考对应的链接。
 
 下面是一个通过请求参数传入数据的脚本，起作用的参数为 `config` 中的
 
