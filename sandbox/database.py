@@ -43,6 +43,10 @@ def get_table_name(name, db_type: Literal['datalake', 'sqlite']):
 async def load_samples_to_sqlite(table_name, samples, db):
     global __cached_tables
     type_map = {int: 'INT', str: 'TEXT', NoneType: 'TEXT'}
+    for sample in samples:
+        for key, value in sample.items():
+            if type(value) not in type_map:
+                sample[key] = json.dumps(value)
     columns = ", ".join([f"{key} {type_map[type(value)]}" for key, value in samples[0].items()])
     logger.info(f'sqlite in-memory table {table_name}: {columns}')
     create_table_query = f'CREATE TABLE "{table_name}" ({columns})'
