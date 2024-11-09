@@ -1,4 +1,4 @@
-FROM vemlp-cn-beijing.cr.volces.com/preset-images/code-sandbox:ubuntu20-py3.11-go1.21-node20.11-jdk21-dotnet8.0-php7-rust1.76-etc
+FROM volcengine/sandbox-fusion:base-ubuntu20-py3.11-go1.21-node20.11-jdk21-dotnet8.0-php7-rust1.76-etc
 
 COPY ./runtime/go ./runtime/go
 # download and cache go deps
