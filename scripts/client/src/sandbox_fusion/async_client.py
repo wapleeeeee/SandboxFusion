@@ -14,8 +14,9 @@
 
 import aiohttp
 import logging
-from typing import List
+from typing import List, Optional
 
+from .common import trim_slash
 from .client import configurable_retry
 from . import config
 
@@ -26,12 +27,17 @@ from .models import RunCodeRequest, RunCodeResponse, EvalResult, \
 logger = logging.getLogger(__name__)
 
 
-async def run_code(request: RunCodeRequest, endpoint: str = '', max_attempts: int = 5) -> RunCodeResponse:
+async def run_code(request: RunCodeRequest,
+                   endpoint: str = '',
+                   max_attempts: int = 5,
+                   client_timeout: Optional[float] = None) -> RunCodeResponse:
 
     @configurable_retry(max_attempts)
     async def _run_code(request: RunCodeRequest) -> RunCodeResponse:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(f'{endpoint or config.SANDBOX_ENDPOINT}/run_code', json=request.dict()) as result:
+        timeout = aiohttp.ClientTimeout(total=client_timeout) if client_timeout else None
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.post(f'{trim_slash(endpoint or config.SANDBOX_ENDPOINT)}/run_code',
+                                    json=request.dict()) as result:
                 if result.status != 200:
                     raise Exception(f'Faas api responded with code {result.status}: {await result.text()}')
                 resp = RunCodeResponse(**(await result.json()))
@@ -42,12 +48,16 @@ async def run_code(request: RunCodeRequest, endpoint: str = '', max_attempts: in
     return await _run_code(request)
 
 
-async def run_jupyter(request: RunJupyterRequest, endpoint: str = '', max_attempts: int = 3) -> RunJupyterResponse:
+async def run_jupyter(request: RunJupyterRequest,
+                      endpoint: str = '',
+                      max_attempts: int = 3,
+                      client_timeout: Optional[float] = None) -> RunJupyterResponse:
 
     @configurable_retry(max_attempts)
     async def _run_jupyter(request: RunJupyterRequest) -> RunJupyterResponse:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(f'{endpoint or config.SANDBOX_ENDPOINT}/run_jupyter',
+        timeout = aiohttp.ClientTimeout(total=client_timeout) if client_timeout else None
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.post(f'{trim_slash(endpoint or config.SANDBOX_ENDPOINT)}/run_jupyter',
                                     json=request.dict()) as result:
                 if result.status != 200:
                     raise Exception(f'Faas api responded with code {result.status}: {await result.text()}')
@@ -61,7 +71,7 @@ async def run_jupyter(request: RunJupyterRequest, endpoint: str = '', max_attemp
 
 async def get_prompts(request: GetPromptsRequest, endpoint: str = '') -> List[Prompt]:
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'{endpoint or config.DATASET_ENDPOINT}/get_prompts',
+        async with session.post(f'{trim_slash(endpoint or config.DATASET_ENDPOINT)}/get_prompts',
                                 json=request.dict()) as result:
             if result.status != 200:
                 raise Exception(f'Faas api responded with code {result.status}: {await result.text()}')
@@ -71,7 +81,7 @@ async def get_prompts(request: GetPromptsRequest, endpoint: str = '') -> List[Pr
 
 async def get_prompt_by_id(request: GetPromptByIdRequest, endpoint: str = '') -> Prompt:
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'{endpoint or config.DATASET_ENDPOINT}/get_prompt_by_id',
+        async with session.post(f'{trim_slash(endpoint or config.DATASET_ENDPOINT)}/get_prompt_by_id',
                                 json=request.dict()) as result:
             if result.status != 200:
                 raise Exception(f'Faas api responded with code {result.status}: {await result.text()}')
@@ -79,12 +89,16 @@ async def get_prompt_by_id(request: GetPromptByIdRequest, endpoint: str = '') ->
             return resp
 
 
-async def submit(request: SubmitRequest, endpoint: str = '', max_attempts: int = 5) -> EvalResult:
+async def submit(request: SubmitRequest,
+                 endpoint: str = '',
+                 max_attempts: int = 5,
+                 client_timeout: Optional[float] = None) -> EvalResult:
 
     @configurable_retry(max_attempts)
     async def _submit(request: SubmitRequest) -> EvalResult:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(f'{endpoint or config.DATASET_ENDPOINT}/submit',
+        timeout = aiohttp.ClientTimeout(total=client_timeout) if client_timeout else None
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.post(f'{trim_slash(endpoint or config.DATASET_ENDPOINT)}/submit',
                                     json=request.dict()) as result:
                 if result.status != 200:
                     raise Exception(f'Faas api responded with code {result.status}: {await result.text()}')
@@ -94,9 +108,12 @@ async def submit(request: SubmitRequest, endpoint: str = '', max_attempts: int =
     return await _submit(request)
 
 
-async def submit_safe(request: SubmitRequest, endpoint: str = '', max_attempts: int = 5) -> EvalResult:
+async def submit_safe(request: SubmitRequest,
+                      endpoint: str = '',
+                      max_attempts: int = 5,
+                      client_timeout: Optional[float] = None) -> EvalResult:
     try:
-        return await submit(request, endpoint, max_attempts)
+        return await submit(request, endpoint, max_attempts, client_timeout)
     except Exception:
         logger.warning('failed to request sandbox, a rejected result is returned')
         return EvalResult(id=request.id, accepted=False, extracted_code='', tests=[])

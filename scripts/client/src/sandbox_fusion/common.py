@@ -57,3 +57,7 @@ def run_concurrent(func: Callable,
     wrapped_funcs = (partial(func, *a, **k) for a, k in zip(args, kwargs))
 
     return run_concurrent_pure(wrapped_funcs, concurrency)
+
+
+def trim_slash(url: str) -> str:
+    return url.rstrip('/')
