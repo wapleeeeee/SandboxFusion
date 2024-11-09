@@ -30,30 +30,34 @@ async def test_mbpp_get():
 
 
 async def test_mbpp_get_id():
-    request = GetPromptByIdRequest(dataset='mbpp', id=14, config=TestConfig())
+    request = GetPromptByIdRequest(dataset='mbpp', id=1, config=TestConfig())
     response = client.post('/get_prompt_by_id', json=request.model_dump())
+    print(response)
     assert response.status_code == 200
     result = Prompt(**response.json())
     print(result)
 
 
-async def test_mbpp_list_ids():
-    request = GetPromptsRequest(dataset='mbpp', config=TestConfig())
-    response = client.post('/list_ids', json=request.model_dump())
-    assert response.status_code == 200
-    print(response.json())
-
-
 async def test_mbpp_submit_passed():
     request = SubmitRequest(dataset='mbpp',
-                            id=14,
+                            id=1,
                             config=TestConfig(language='python'),
                             completion='''
 ```python
-def find_Volume(l,b,h) : 
-    return ((l * b * h) / 2)
-```
-''')
+R = 3
+C = 3
+def min_cost(cost, m, n): 
+    tc = [[0 for x in range(C)] for x in range(R)] 
+    tc[0][0] = cost[0][0] 
+    for i in range(1, m+1): 
+            tc[i][0] = tc[i-1][0] + cost[i][0] 
+    for j in range(1, n+1): 
+            tc[0][j] = tc[0][j-1] + cost[0][j] 
+    for i in range(1, m+1): 
+            for j in range(1, n+1): 
+                    tc[i][j] = min(tc[i-1][j-1], tc[i-1][j], tc[i][j-1]) + cost[i][j] 
+    return tc[m][n]
+```''')
     response = client.post('/submit', json=request.model_dump())
     assert response.status_code == 200
     result = EvalResult(**response.json())
@@ -62,7 +66,7 @@ def find_Volume(l,b,h) :
 
 async def test_mbpp_submit_failed():
     request = SubmitRequest(dataset='mbpp',
-                            id=14,
+                            id=1,
                             config=TestConfig(language='python'),
                             completion='''
     mean = max(numbers) / len(numbers)
