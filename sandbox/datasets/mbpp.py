@@ -31,34 +31,17 @@ from sandbox.utils.common import ensure_json
 from sandbox.utils.extraction import extract_code_from_freeform_completion
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
-
 def postprocess_completion(completion, stop_words=["\nassert", '\n"""']):
-    import re
-
-    def extract_py_code(text):
-        """从原始completion中，抽出python实现
-        """
-        code = "\n".join([line for line in text.split("\n") if line.strip() != ""]) + "\n"
-
-        pattern_py = "(?:^(?:import|from|#)[^\n]+\n)*" \
-                        "^(?:def|class) [^\n]+\n" \
-                        "(?:\s+[^\n]+\n)+"  # 函数/类实现
-        matches = re.findall(pattern_py, code, re.M)
-        return matches
-
     if '[DONE]' in completion:
         completion = completion[:completion.index('[DONE]')]
-    '''
-        Split off first block of code by scanning for class, def etc. on newlines.
-    '''
-    code = extract_code_from_freeform_completion(completion, {}, 'python', first_block_only=True)
 
-    if extract_py_code(code) or not extract_py_code(completion):
-        completion = code
-    else:
-        completion = extract_py_code(completion)[0]
+    code,_ = extract_code_from_freeform_completion(completion, 'python', first_block_only=True)
 
-    return re.split("|".join(stop_words), completion)[0].rstrip()
+    for st in stop_words:
+        index = code.find(st)
+        if index != -1:
+            code = code[:index]
+    return code
 
 
 class MBPPDataset(CodingDataset, dataset_ids=['mbpp']):
@@ -75,7 +58,7 @@ class MBPPDataset(CodingDataset, dataset_ids=['mbpp']):
         rows = await get_rows_in_table(
             request,
             cls.get_table_name(request.dataset),
-            columns=['id', 'content', 'labels', 'test_list'],
+            columns=['id', 'content', 'labels', 'test_list']
         )
         return [cls._generate_single_prompt(r, request.config) for r in rows]
 
@@ -100,7 +83,7 @@ class MBPPDataset(CodingDataset, dataset_ids=['mbpp']):
         else:
             tests = '\n'.join(row['test_list'])
             prompt = f"You are an expert Python programmer, and here is your task: {row['content']} Your code should pass these tests:\n\n{tests}"
-
+    
         return Prompt(id=row['id'], prompt=prompt, labels=row['labels'])
 
     @classmethod
