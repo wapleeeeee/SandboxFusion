@@ -42,34 +42,12 @@ def stop_token_trim(s: str, row: Dict[str, Any]) -> str:
     return s
 
 
-class HumanEvalDataset(CodingDataset,
-                       dataset_ids=[
-                           'humaneval_python',
-                           'humaneval_cpp',
-                           'humaneval_typescript',
-                           'humaneval_bash',
-                           'humaneval_csharp',
-                           'humaneval_go',
-                           'humaneval_java',
-                           'shadow_humaneval_python',
-                           'bigcodebench',
-                       ]):
+class HumanEvalDataset(CodingDataset):
     '''
     this class assumes:
     - each dataset has only one language
     - append the raw completion to the code
     '''
-    table_names = {
-        'humaneval_python': 'code_eval_humaneval_python',
-        'humaneval_cpp': 'code_eval_humaneval_cpp',
-        'humaneval_typescript': 'code_eval_humaneval_typescript',
-        'humaneval_bash': 'code_eval_humaneval_bash',
-        'humaneval_csharp': 'code_eval_humaneval_csharp',
-        'humaneval_go': 'code_eval_humaneval_go',
-        'humaneval_java': 'code_eval_humaneval_java',
-        'shadow_humaneval_python': 'code_eval_shadow_humaneval_python',
-        'bigcodebench': 'code_eval_bigcodebench',
-    }
     run_lang_map = {
         'humaneval_python': 'python',
         'humaneval_cpp': 'cpp',
@@ -94,25 +72,6 @@ class HumanEvalDataset(CodingDataset,
         'evoeval': 'python',
         'bigcodebench': 'python',
     }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        return {
-            'humaneval_python': 161,
-            'humaneval_cpp': 161,
-            'shadow_humaneval_python': 120,
-            'humaneval_typescript': 159,
-            'humaneval_bash': 158,
-            'humaneval_csharp': 158,
-            'humaneval_go': 154,
-            'humaneval_java': 158,
-            'humaneval_form_cpp': 2352,
-            'humaneval_form_go': 2513,
-            'humaneval_form_javascript': 5818,
-            'humaneval_form_java': 1251,
-            'evoeval': 500,
-            'bigcodebench': 1140,
-        }[dataset_id]
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:

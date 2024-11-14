@@ -110,15 +110,7 @@ def comment(code: str, language: str):
         raise ValueError("language must be one of [python, java]")
 
 
-class RepobenchPDataset(CodingDataset, dataset_ids=['repobench_p_python', 'repobench_p_java']):
-    table_names = {
-        'repobench_p_python': 'code_eval_repobench_p_python_sampled',
-        'repobench_p_java': 'code_eval_repobench_p_java_sampled'
-    }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        return {'repobench_p_python': 2000, 'repobench_p_java': 2000}[dataset_id]
+class RepobenchPDataset(CodingDataset):
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:

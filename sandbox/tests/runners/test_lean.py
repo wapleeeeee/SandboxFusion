@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pytest
 from fastapi.testclient import TestClient
 
 from sandbox.runners import CommandRunStatus
@@ -21,6 +22,7 @@ from sandbox.server.server import app
 client = TestClient(app)
 
 
+@pytest.mark.lean
 def test_lean_pass():
     request = RunCodeRequest(language='lean',
                              code='''
@@ -66,6 +68,7 @@ theorem amc12_2000_p5
     assert "declaration uses 'sorry'" in result.run_result.stdout
 
 
+@pytest.mark.lean
 def test_lean_error():
     request = RunCodeRequest(language='lean',
                              code='''
