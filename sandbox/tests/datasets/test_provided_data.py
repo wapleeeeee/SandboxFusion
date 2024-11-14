@@ -24,7 +24,7 @@ client = TestClient(app)
 async def test_provided_data_get():
     row = {'id': 0, 'labels': '{}', 'content': 'this is a prompt'}
     request = GetPromptsRequest(dataset='this doesn\'t matter',
-                                config=TestConfig(dataset_type='AutoEvalV4Dataset', provided_data=[row, row]))
+                                config=TestConfig(dataset_type='AutoEvalDataset', provided_data=[row, row]))
     response = client.post('/get_prompts', json=request.model_dump())
     assert response.status_code == 200
     results = [Prompt(**sample) for sample in response.json()]
@@ -36,7 +36,7 @@ async def test_provided_data_get_id():
     row = {'id': 0, 'labels': '{}', 'content': 'this cis a prompt'}
     request = GetPromptByIdRequest(dataset='this doesn\'t matter',
                                    id=0,
-                                   config=TestConfig(dataset_type='AutoEvalV4Dataset', provided_data=row))
+                                   config=TestConfig(dataset_type='AutoEvalDataset', provided_data=row))
     response = client.post('/get_prompt_by_id', json=request.model_dump())
     assert response.status_code == 200
     result = Prompt(**response.json())
@@ -57,7 +57,7 @@ async def test_provided_data_submit_passed():
     canonical_solution = "\nimport pandas as pd\n\ndef proc_data():\n    # Load the data from the uploaded CSV file\n    hitters_data = pd.read_csv('Hitters_X_train.csv')\n\n    # Calculate the Pearson correlation coefficient between \"Assists\" and \"Errors\"\n    correlation = hitters_data[\"Assists\"].corr(hitters_data[\"Errors\"])\n    \n    return correlation"
     request = SubmitRequest(dataset='this doesn\'t matter',
                             id=0,
-                            config=TestConfig(dataset_type='AutoEvalV4Dataset', provided_data=row),
+                            config=TestConfig(dataset_type='AutoEvalDataset', provided_data=row),
                             completion=f'''
 ```python
 {canonical_solution}

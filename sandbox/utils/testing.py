@@ -21,6 +21,7 @@ from fastapi import HTTPException
 from sandbox.configs.run_config import RunConfig
 from sandbox.datasets.types import EvalTestCase, GeneralStdioTest, RunStatus, TestConfig
 from sandbox.runners.types import compile_languages
+from sandbox.utils.common import truncate_str
 from sandbox.utils.execution import max_concurrency
 from sandbox.utils.sandbox_client import RunCodeRequest, run_code_in_sandbox, run_code_in_sandbox_w_retry
 
@@ -34,6 +35,18 @@ async def check_auto_test_case(code: str, config: TestConfig) -> EvalTestCase:
     '''
     result = await run_code_in_sandbox(RunCodeRequest(code=code, language=config.language))
     return EvalTestCase(passed=result.status == RunStatus.Success, exec_info=result)
+
+
+def is_float(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+def float_equal(a, b, rel_tol=1e-5):
+    return abs(a - b) / max(abs(b), 1e-10) < rel_tol
 
 
 async def check_stdio_test_case(code: str, case: GeneralStdioTest, config: TestConfig, lower_cmp=True) -> EvalTestCase:
@@ -66,7 +79,15 @@ async def check_stdio_test_case(code: str, case: GeneralStdioTest, config: TestC
             rl = rl.lower()
             el = el.lower()
         if rl.strip() != el.strip():
+            if is_float(el) and is_float(rl):
+                if float_equal(float(rl), float(el)):
+                    continue
             return fail_case
+    if not config.extra.get('return_full_case', False):
+        for k in case.input:
+            case.input[k] = truncate_str(case.input[k])
+        for k in case.output:
+            case.output[k] = truncate_str(case.output[k])
     return EvalTestCase(passed=True, exec_info=result, test_info=case.model_dump())
 
 
@@ -91,13 +112,15 @@ async def check_stdio_test_cases_parallel(code: str,
     tasks: List[asyncio.Task[EvalTestCase]] = []
 
     check_stdio_test_case_limited = check_stdio_test_case
-    if sandbox_config.online_judge.max_runner_concurrency > 0:
+    if sandbox_config.dataset.max_runner_concurrency > 0:
         check_stdio_test_case_limited = max_concurrency(
-            sandbox_config.online_judge.max_runner_concurrency)(check_stdio_test_case)
+            sandbox_config.dataset.max_runner_concurrency)(check_stdio_test_case)
 
     for case in cases:
         task = asyncio.create_task(check_stdio_test_case_limited(code, case, config, lower_cmp))
         tasks.append(task)
+
+    run_all_cases = config.extra.get("run_all_cases", False)
 
     for task in tasks:
         try:
@@ -105,7 +128,8 @@ async def check_stdio_test_cases_parallel(code: str,
         except Exception as e:
             raise HTTPException(status_code=500, detail=f'Failed to check stdio test case: {e}')
         result.append(outcome)
-        if not outcome.passed:
+
+        if not run_all_cases and not outcome.passed:
             for remaining_task in tasks:
                 if not remaining_task.done():
                     remaining_task.cancel()

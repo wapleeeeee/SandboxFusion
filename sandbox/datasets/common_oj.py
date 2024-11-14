@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 from typing import Any, Dict, List
 
 from fastapi import HTTPException
@@ -28,14 +27,12 @@ from sandbox.datasets.types import (
     SubmitRequest,
     TestConfig,
 )
+from sandbox.utils.common import ensure_json
 from sandbox.utils.extraction import default_extract_helper
 from sandbox.utils.testing import check_stdio_test_cases_parallel
 
 
-class CommonOJDataset(CodingDataset, dataset_ids=['code_contests']):
-    table_names = {
-        'code_contests': 'code_eval_code_contests',
-    }
+class CommonOJDataset(CodingDataset):
 
     language_prompts = {
         'en': {
@@ -59,10 +56,6 @@ class CommonOJDataset(CodingDataset, dataset_ids=['code_contests']):
                 "请实现一个完整的 Java 程序，包含一个名为 Main 的公共类。你的类中应包含 public static void main(String[] args) 方法。你的程序应该从 System.in 读取输入，并将结果输出到 System.out。"
         }
     }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        return {'code_contests': 12834}[dataset_id]
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:
@@ -91,7 +84,7 @@ class CommonOJDataset(CodingDataset, dataset_ids=['code_contests']):
 
         prompt += f"\n\n{specific_prompt.format(language=language)}"
 
-        return Prompt(id=row['id'], prompt=prompt, labels=json.loads(row['labels']))
+        return Prompt(id=row['id'], prompt=prompt, labels=ensure_json(row, 'labels'))
 
     @classmethod
     async def evaluate_single(cls, request: SubmitRequest) -> EvalResult:
@@ -99,7 +92,7 @@ class CommonOJDataset(CodingDataset, dataset_ids=['code_contests']):
             raise HTTPException(status_code=400,
                                 detail=f'config.language field must exist for CommonOJDataset, got None')
         row = await get_row_by_id_in_table(request, cls.get_table_name(request.dataset), columns=['test'])
-        cases = [GeneralStdioTest(**case) for case in json.loads(row['test'], strict=False)]
+        cases = [GeneralStdioTest(**case) for case in ensure_json(row, 'test')]
         code = default_extract_helper(request.completion, request.config.language, request.config.custom_extract_logic)
         outcomes = await check_stdio_test_cases_parallel(code, cases, request.config)
         return EvalResult(id=request.id,

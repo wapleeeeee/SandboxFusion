@@ -130,15 +130,7 @@ def remove_imports(lean_code: str) -> str:
     return '\n'.join(other_lines).strip()
 
 
-class MiniF2FLean4Dataset(CodingDataset, dataset_ids=['minif2f_lean4_test', 'minif2f_lean4_valid']):
-    table_names = {
-        'minif2f_lean4_test': 'code_eval_minif2f_lean4_test',
-        'minif2f_lean4_valid': 'code_eval_minif2f_lean4_valid',
-    }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        return {'minif2f_lean4_test': 244, 'minif2f_lean4_valid': 244}[dataset_id]
+class MiniF2FLean4Dataset(CodingDataset):
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:

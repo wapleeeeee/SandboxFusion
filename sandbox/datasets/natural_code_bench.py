@@ -145,18 +145,7 @@ def get_java_test_assets(code: List[str], test: str) -> Dict[str, str]:
     return {k: base64.b64encode(v.encode('utf-8')).decode('utf-8') for k, v in files.items()}
 
 
-class NaturalCodeBenchDataset(CodingDataset,
-                              dataset_ids=['ncb_python_zh', 'ncb_python_en', 'ncb_java_zh', 'ncb_java_en']):
-    table_names = {
-        'ncb_python_zh': 'code_eval_ncb_python_zh',
-        'ncb_python_en': 'code_eval_ncb_python_en',
-        'ncb_java_zh': 'code_eval_ncb_java_zh',
-        'ncb_java_en': 'code_eval_ncb_java_en',
-    }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        return {'ncb_python_zh': 70, 'ncb_python_en': 70, 'ncb_java_zh': 70, 'ncb_java_en': 70}[dataset_id]
+class NaturalCodeBenchDataset(CodingDataset):
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:

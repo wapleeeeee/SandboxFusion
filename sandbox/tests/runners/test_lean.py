@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-import pytest
 from fastapi.testclient import TestClient
 
 from sandbox.runners import CommandRunStatus
@@ -23,79 +21,71 @@ from sandbox.server.server import app
 client = TestClient(app)
 
 
-
-
-@pytest.mark.minor
-def test_D_ut_print():
-    request = RunCodeRequest(language='D_ut',
+def test_lean_pass():
+    request = RunCodeRequest(language='lean',
                              code='''
-import std.stdio; 
- 
-void main(string[] args) { 
-   writeln("Hello, World!"); 
-}
-    ''',
-                             run_timeout=5)
+import Mathlib.Data.Real.Basic
+import Mathlib.Tactic.Linarith
+
+theorem amc12_2000_p5
+  (x p : ℝ)
+  (h₀ : x < 2)
+  (h₁ : abs (x - 2) = p) :
+  x - p = 2 - 2 * p := by
+  have : abs (x - 2) = -(x - 2) := by
+    apply abs_of_neg
+    linarith
+  rw [h₁] at this
+  linarith
+                             ''',
+                             run_timeout=30)
     response = client.post('/run_code', json=request.model_dump())
     assert response.status_code == 200
     result = RunCodeResponse(**response.json())
-    print(result)
+    print(result.model_dump_json(indent=2))
     assert result.status == RunStatus.Success
-    assert "Hello, World!" in result.run_result.stdout.strip()
 
-
-@pytest.mark.minor
-def test_D_ut_timeout():
-    request = RunCodeRequest(language='D_ut',
+    request = RunCodeRequest(language='lean',
                              code='''
-import core.thread;
-import std.stdio;
+import Mathlib.Data.Real.Basic
+import Mathlib.Tactic.Linarith
 
-void sleepSeconds() {
-    Thread.sleep( dur!("seconds")( 5 ) );
-}
-
-void main() {
-    sleepSeconds();
-    // 5秒后执行下面的代码
-    writeln("5 seconds have passed.");
-}
-    ''',
-                             run_timeout=1)
-    response = client.post('/run_code', json=request.model_dump())
-    assert response.status_code == 200
-    result = RunCodeResponse(**response.json())
-    assert result.status == RunStatus.Failed
-    assert result.run_result.status == CommandRunStatus.TimeLimitExceeded
-
-
-@pytest.mark.minor
-def test_D_ut_assertion_success():
-    request = RunCodeRequest(language='D_ut', code='''
-unittest
-{
-    assert(0 == 0);
-}
-void main(){}
+theorem amc12_2000_p5
+  (x p : ℝ)
+  (h₀ : x < 2)
+  (h₁ : abs (x - 2) = p) :
+  x - p = 2 - 2 * p := by
+  sorry
     ''')
     response = client.post('/run_code', json=request.model_dump())
     assert response.status_code == 200
     result = RunCodeResponse(**response.json())
+    print(result.model_dump_json(indent=2))
     assert result.status == RunStatus.Success
     assert result.run_result.status == CommandRunStatus.Finished
+    assert "declaration uses 'sorry'" in result.run_result.stdout
 
 
-@pytest.mark.minor
-def test_D_ut_assertion_error():
-    request = RunCodeRequest(language='D_ut', code='''
-unittest
-{
-    assert(0 == 1);
-}
-void main(){}
+def test_lean_error():
+    request = RunCodeRequest(language='lean',
+                             code='''
+import Mathlib.Data.Real.Basic
+import Mathlib.Tactic.Linarith
+
+theorem amc12_2000_p5
+  (x p : ℝ)
+  (h₀ : x < 2)
+  (h₁ : abs (x - 2) = p) :
+  x - p = 2 - 2 * p := by
+  have : abs (x - 2) = -(x - 2) := by
+    apply abs_of_neg
+    -- linarith
+  rw [h₁] at this
+  linarith
     ''')
     response = client.post('/run_code', json=request.model_dump())
     assert response.status_code == 200
     result = RunCodeResponse(**response.json())
+    print(result.model_dump_json(indent=2))
     assert result.status == RunStatus.Failed
     assert result.run_result.status == CommandRunStatus.Finished

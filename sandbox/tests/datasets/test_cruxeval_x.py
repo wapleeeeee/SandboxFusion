@@ -17,7 +17,7 @@ import re
 from fastapi.testclient import TestClient
 
 from sandbox.utils.execution import max_concurrency
-from sandbox.datasets import CruxEvalDataset
+from sandbox.datasets.cruxeval import CruxEvalDataset
 from sandbox.datasets.cruxeval import language_mappings
 from sandbox.datasets.types import EvalResult, Prompt, TestConfig
 from sandbox.server.online_judge_api import GetPromptByIdRequest, GetPromptsRequest, SubmitRequest
@@ -85,11 +85,7 @@ async def test_cruxeval_x_get_submit_passed():
         # output_case = find_substr(output, code, rp=r'\?\?\?\?')
         request = SubmitRequest(dataset='cruxeval_x',
                                 id=id,
-                                config=TestConfig(extra={'mode': 'input'}),
-                                completion=f'''
-to makeas  asjdena   
 [ANSWER]
-{input_case}
 [/ANSWER]
 
 [ANSWER]

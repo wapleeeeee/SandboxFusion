@@ -97,15 +97,7 @@ def get_first_line_not_comment(code: str, language: str = "python"):
     return lines[0]
 
 
-class RepobenchCDataset(CodingDataset, dataset_ids=['repobench_c_python', 'repobench_c_java']):
-    table_names = {
-        'repobench_c_python': 'code_eval_repobench_c_python_sampled',
-        'repobench_c_java': 'code_eval_repobench_c_java_sampled'
-    }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        return {'repobench_c_python': 2000, 'repobench_c_java': 20}[dataset_id]
+class RepobenchCDataset(CodingDataset):
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:

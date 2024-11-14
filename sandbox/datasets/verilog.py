@@ -34,15 +34,7 @@ from sandbox.utils.extraction import extract_code_from_freeform_completion_v2
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
 
-class VerilogDataset(CodingDataset, dataset_ids=['verilogeval_human', 'verilogeval_machine']):
-    table_names = {
-        'verilogeval_human': 'code_eval_verilogeval_human',
-        'verilogeval_machine': 'code_eval_verilogeval_machine'
-    }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        return {'verilogeval_human': 156, 'verilogeval_machine': 143}[dataset_id]
+class VerilogDataset(CodingDataset):
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:

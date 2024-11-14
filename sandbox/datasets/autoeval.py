@@ -84,9 +84,8 @@ def postprocess_full_code(code, language):
     return code
 
 
-class AutoEvalDataset(CodingDataset, dataset_ids=[]):
+class AutoEvalDataset(CodingDataset):
     class_aliases = ['AutoEvalV4Dataset', 'AutoEvalV5Dataset', 'AutoEvalV6Dataset']
-    table_names = {}
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:

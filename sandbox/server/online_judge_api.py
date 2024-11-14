@@ -28,17 +28,18 @@ from sandbox.datasets.types import (
     SubmitRequest,
     TestConfig,
 )
+from sandbox.registry import get_all_dataset_ids, get_coding_class_by_dataset, get_coding_class_by_name
 
 oj_router = APIRouter()
 
 
 def get_dataset_cls(dataset_id: str, config: Optional[TestConfig] = None) -> CodingDataset:
-    internal_cls = CodingDataset.get_subclass_by_dataset(dataset_id)
+    internal_cls = get_coding_class_by_dataset(dataset_id)
     if internal_cls is not None:
         return internal_cls
     if config is None or config.dataset_type is None:
         raise HTTPException(status_code=400, detail=f'no eval class found for dataset {dataset_id}')
-    config_cls = CodingDataset.get_subclass_by_name(config.dataset_type)
+    config_cls = get_coding_class_by_name(config.dataset_type)
     if config_cls is None:
         raise HTTPException(status_code=400, detail=f'eval class {config.dataset_type} not found')
     return config_cls
@@ -46,7 +47,7 @@ def get_dataset_cls(dataset_id: str, config: Optional[TestConfig] = None) -> Cod
 
 @oj_router.get("/list_datasets", description='List all registered datasets', tags=['datasets'])
 async def list_datasets() -> List[str]:
-    return list(CodingDataset.subclasses_by_dataset.keys())
+    return get_all_dataset_ids()
 
 
 @oj_router.post("/list_ids", description='List all ids of a dataset', tags=['datasets'])

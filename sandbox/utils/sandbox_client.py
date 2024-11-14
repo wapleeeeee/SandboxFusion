@@ -62,10 +62,10 @@ async def post_run_request(request: RunCodeRequest, endpoint: str) -> RunCodeRes
        retry_error_callback=on_retry_error)
 async def run_code_in_sandbox(request: RunCodeRequest) -> RunCodeResponse:
     language = request.language
-    if language in cpu_languages and config.online_judge.cpu_runner_url:
-        resp = await post_run_request(request, config.online_judge.cpu_runner_url)
-    elif language in gpu_languages and config.online_judge.gpu_runner_url:
-        resp = await post_run_request(request, config.online_judge.gpu_runner_url)
+    if language in cpu_languages and config.dataset.cpu_runner_url:
+        resp = await post_run_request(request, config.dataset.cpu_runner_url)
+    elif language in gpu_languages and config.dataset.gpu_runner_url:
+        resp = await post_run_request(request, config.dataset.gpu_runner_url)
     else:
         resp = await run_code(request)
     if resp.status == RunStatus.SandboxError:
@@ -79,10 +79,10 @@ async def run_code_in_sandbox(request: RunCodeRequest) -> RunCodeResponse:
        retry_error_callback=on_retry_error)
 async def run_code_in_sandbox_w_retry(request: RunCodeRequest) -> RunCodeResponse:
     language = request.language
-    if language in cpu_languages and config.online_judge.cpu_runner_url:
-        resp = await post_run_request(request, config.online_judge.cpu_runner_url)
-    elif language in gpu_languages and config.online_judge.gpu_runner_url:
-        resp = await post_run_request(request, config.online_judge.gpu_runner_url)
+    if language in cpu_languages and config.dataset.cpu_runner_url:
+        resp = await post_run_request(request, config.dataset.cpu_runner_url)
+    elif language in gpu_languages and config.dataset.gpu_runner_url:
+        resp = await post_run_request(request, config.dataset.gpu_runner_url)
     else:
         resp = await run_code(request)
     if resp.status == RunStatus.SandboxError:

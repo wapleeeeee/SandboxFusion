@@ -27,7 +27,6 @@ from sandbox.server.server import app
 client = TestClient(app)
 
 
-
 async def test_mhpp_get():
     request = GetPromptsRequest(dataset='mhpp', config=TestConfig())
     response = client.post('/get_prompts', json=request.model_dump())

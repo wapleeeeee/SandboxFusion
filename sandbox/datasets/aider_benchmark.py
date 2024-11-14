@@ -33,14 +33,7 @@ from sandbox.utils.extraction import default_extract_helper
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
 
-class AiderBenchmarkDataset(CodingDataset, dataset_ids=['aider_benchmark_v1']):
-    table_names = {
-        'aider_benchmark_v1': 'code_eval_aider_benchmark_v1',
-    }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> str:
-        return {'aider_benchmark_v1': 133}[dataset_id]
+class AiderBenchmarkDataset(CodingDataset):
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:

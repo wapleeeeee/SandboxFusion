@@ -81,9 +81,9 @@ async def run_command_bare(command: str | List[str],
             if psutil.pid_exists(p.pid):
                 kill_process_tree(p.pid)
                 logger.info(f'process killed: {p.pid}')
-            if config.runner.cleanup_process:
+            if config.sandbox.cleanup_process:
                 cleanup_process()
-            if config.runner.restore_bash:
+            if config.sandbox.restore_bash:
                 ensure_bash_integrity()
 
         return CommandRunResult(status=CommandRunStatus.Finished,
@@ -103,7 +103,7 @@ async def run_commands(compile_command: Optional[str], run_command: str, cwd: st
     compile_res = None
     run_res = None
 
-    if config.runner.isolation == 'none':
+    if config.sandbox.isolation == 'none':
         preexec_fn = None
         if kwargs.get('set_uid'):
             set_permissions_recursively(cwd, 0o777)
@@ -134,7 +134,7 @@ async def run_commands(compile_command: Optional[str], run_command: str, cwd: st
                 files[filename] = base64_content
         return CodeRunResult(compile_result=compile_res, run_result=run_res, files=files)
 
-    elif config.runner.isolation == 'lite':
+    elif config.sandbox.isolation == 'lite':
         async with tmp_overlayfs() as root, tmp_cgroup(mem_limit='4G', cpu_limit=1) as cgroups, tmp_netns(
                 kwargs.get('netns_no_bridge', False)) as netns:
             prefix = []

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import os
-from typing import List, Literal, Optional, Union
+from typing import Dict, List, Literal, Optional, Union
 
 import structlog
 import yaml
@@ -24,7 +24,7 @@ logger = structlog.stdlib.get_logger()
 
 class RunConfig(BaseModel):
 
-    class OnlineJudge(BaseModel):
+    class DatasetConfig(BaseModel):
 
         class DataBase(BaseModel):
 
@@ -58,12 +58,19 @@ class RunConfig(BaseModel):
             backend: Backend
             cache: Optional[Cache] = None
 
+        class RegistryItem(BaseModel):
+            module_path: str
+            class_name: str
+            dataset_tables: Dict[str, str] = {}
+
         database: DataBase
         max_runner_concurrency: int = 0
         cpu_runner_url: Optional[str] = None
         gpu_runner_url: Optional[str] = None
+        default_dataset_table: str = 'code_eval_${dataset_id}'
+        registry: List[RegistryItem] = []
 
-    class Runner(BaseModel):
+    class SandboxConfig(BaseModel):
         '''
         none: no isolation, cleanup_process and restore_bash are best effort for correctness
         lite: handcrafted overlayfs + chroot + cgroups isolation, fast (< 100 ms overhead)
@@ -78,8 +85,8 @@ class RunConfig(BaseModel):
     class Common(BaseModel):
         logging_color: bool
 
-    runner: Runner
-    online_judge: OnlineJudge
+    sandbox: SandboxConfig
+    dataset: DatasetConfig
     common: Common
 
     def __init__(self):

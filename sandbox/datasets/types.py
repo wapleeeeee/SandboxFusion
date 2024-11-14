@@ -13,19 +13,28 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
+from string import Template
 from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
+from sandbox.configs.run_config import RunConfig
 from sandbox.runners.types import CommandRunResult, CommandRunStatus, Language  # nopycln: import
 from sandbox.server.sandbox_api import RunCodeRequest, RunCodeResponse, RunStatus  # nopycln: import
+
+server_config = RunConfig.get_instance_sync()
 
 # OJ related
 
 
+class Message(BaseModel):
+    role: str
+    content: str
+
+
 class Prompt(BaseModel):
     id: int | str
-    prompt: str
+    prompt: str | List[Message]
     labels: Dict[str, Any] = {}
 
 
@@ -109,33 +118,17 @@ class GetMetricsFunctionResult(BaseModel):
 
 
 class CodingDataset(ABC):
-    subclasses_by_dataset = {}
-
-    def __init_subclass__(cls, dataset_ids: List[str], **kwargs):
-        super().__init_subclass__(**kwargs)
-        for dataset_id in dataset_ids:
-            cls.subclasses_by_dataset[dataset_id] = cls
-
-    @classmethod
-    def get_subclass_by_dataset(cls, dataset_id) -> 'CodingDataset':
-        return cls.subclasses_by_dataset.get(dataset_id)
-
-    @classmethod
-    def get_subclass_by_name(cls, class_name) -> 'CodingDataset':
-        subclass_map = {}
-        for subcls in cls.__subclasses__():
-            subclass_map[subcls.__name__] = subcls
-            if hasattr(subcls, 'class_aliases'):
-                for name in subcls.class_aliases:
-                    subclass_map[name] = subcls
-        return subclass_map.get(class_name)
 
     @classmethod
     def get_table_name(cls, dataset_id: str) -> str:
-        if hasattr(cls, 'table_names'):
-            if dataset_id in cls.table_names:
-                return cls.table_names[dataset_id]
-        return f'code_eval_{dataset_id}'
+        for registry in server_config.dataset.registry:
+            if registry.class_name != cls.__name__:
+                continue
+            if dataset_id in registry.dataset_tables:
+                return registry.dataset_tables[dataset_id]
+            else:
+                return Template(server_config.dataset.default_dataset_table).substitute(dataset_id=dataset_id)
+        raise RuntimeError(f'class {cls.__name__} not in config registry!')
 
     @classmethod
     async def get_ids(cls, request: GetPromptsRequest) -> List[int | str]:
@@ -143,20 +136,21 @@ class CodingDataset(ABC):
         return [p.id for p in prompts]
 
     @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        raise NotImplementedError(f"get_num_problems method not implemented for {cls.__name__}")
-
-    @classmethod
     @abstractmethod
-    async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:
+    async def get_num_problems(self, dataset_id: str) -> int:
         ...
 
     @classmethod
     @abstractmethod
-    async def get_prompt_by_id(cls, request: GetPromptByIdRequest) -> Prompt:
+    async def get_prompts(self, request: GetPromptsRequest) -> List[Prompt]:
         ...
 
     @classmethod
     @abstractmethod
-    async def evaluate_single(cls, request: SubmitRequest) -> EvalResult:
+    async def get_prompt_by_id(self, request: GetPromptByIdRequest) -> Prompt:
+        ...
+
+    @classmethod
+    @abstractmethod
+    async def evaluate_single(self, request: SubmitRequest) -> EvalResult:
         ...
