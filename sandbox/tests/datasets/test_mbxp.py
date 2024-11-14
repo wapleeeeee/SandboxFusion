@@ -19,7 +19,7 @@ from fastapi.testclient import TestClient
 from pydantic import BaseModel
 
 from sandbox.utils.execution import max_concurrency
-from sandbox.datasets import MBXPDataset
+from sandbox.datasets.mbxp import MBXPDataset
 from sandbox.datasets.types import EvalResult, EvalTestCase, Prompt, TestConfig
 from sandbox.server.online_judge_api import GetPromptByIdRequest, GetPromptsRequest, SubmitRequest
 from sandbox.server.server import app

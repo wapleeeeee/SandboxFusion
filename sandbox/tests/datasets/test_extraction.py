@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sandbox.utils.extraction import extract_code_from_freeform_completion, extract_code_from_freeform_completion_v2
+from sandbox.utils.extraction import extract_code_from_freeform_completion, extract_code_from_freeform_completion_v2, default_extract_helper
 
 completion1 = """
 Some words before code...
@@ -45,6 +45,22 @@ def main():
 Some words here...
 """
 
+completion4 = """
+Some words here...
+```bash
+pip install xxx
+```
+
+Some words here...
+```python
+def main():
+    pass
+
+assert a == 1
+```
+Some words here...
+"""
+
 result1 = """
 def main():
     pass
@@ -61,6 +77,17 @@ def main():
     pass
 """
 
+result4 = """
+def main():
+    pass
+"""
+result4_ = """
+def main():
+    pass
+
+assert a == 1
+"""
+
 
 def test_extract_code_from_freeform_completion():
     r1, t1 = extract_code_from_freeform_completion(completion1)
@@ -69,6 +96,10 @@ def test_extract_code_from_freeform_completion():
     assert r2.strip() == result2.strip() and t2 == 'incomplete_fenced'
     r3, _ = extract_code_from_freeform_completion(completion3, 'python', True, exactly_match=True)
     assert r3.strip() == result3.strip()
+    r4, _ = extract_code_from_freeform_completion(completion4, 'python', True, exactly_match=True, remove_asserts=True)
+    assert r4.strip() == result4.strip()
+    r4_, _ = extract_code_from_freeform_completion(completion4, 'python', True, exactly_match=True)
+    assert r4_.strip() == result4_.strip()
 
 
 v2_completion1 = """
@@ -251,6 +282,70 @@ def solve(polys):
     
     # Calculate and return the area of the minimum rotated rectangle
     return min_rotated_rect.area
+"""
+
+v2_completion7_ = """
+To solve this problem, we can use the Shapely library in Python, which provides geometric objects and operations. Specifically, we can use the `minimum_rotated_rectangle` method to find the smallest bounding rotated rectangle for a given polygon. Here's how you can implement the `solve` function:
+
+1. Install the Shapely library if you haven't already:
+   ```bash
+   pip install shapely
+   ```
+
+2. Implement the `solve` function:
+
+```python
+from shapely.geometry import Polygon, MultiPolygon
+
+def solve(polys):
+    # Convert the list of polygons into Shapely Polygon objects
+    shapely_polys = [Polygon(poly) for poly in polys]
+    
+    # Combine all polygons into a single MultiPolygon
+    multi_poly = MultiPolygon(shapely_polys)
+    
+    # Get the minimum rotated rectangle that covers the MultiPolygon
+    min_rotated_rect = multi_poly.minimum_rotated_rectangle
+    
+    # Calculate and return the area of the minimum rotated rectangle
+    return min_rotated_rect.area
+
+assert a == 1
+
+# Example usage:
+polys = [
+    [(0, 0), (1, 0), (1, 1), (0, 1)],
+    [(2, 2), (3, 2), (3, 3), (2, 3)]
+]
+print(solve(polys))  # Output will be the area of the smallest bounding rotated rectangle
+```
+
+### Explanation:
+1. **Convert Input to Shapely Polygons**: The input list of polygons is converted into Shapely `Polygon` objects.
+2. **Combine Polygons**: All the individual polygons are combined into a single `MultiPolygon` object.
+3. **Minimum Rotated Rectangle**: The `minimum_rotated_rectangle` method is used to find the smallest bounding rotated rectangle that can cover the `MultiPolygon`.
+4. **Calculate Area**: The area of this minimum rotated rectangle is calculated and returned.
+
+This function will give you the area of the smallest bounding rotated rectangle that can cover all the input polygons.
+"""
+
+v2_result7_ = """
+from shapely.geometry import Polygon, MultiPolygon
+
+def solve(polys):
+    # Convert the list of polygons into Shapely Polygon objects
+    shapely_polys = [Polygon(poly) for poly in polys]
+    
+    # Combine all polygons into a single MultiPolygon
+    multi_poly = MultiPolygon(shapely_polys)
+    
+    # Get the minimum rotated rectangle that covers the MultiPolygon
+    min_rotated_rect = multi_poly.minimum_rotated_rectangle
+    
+    # Calculate and return the area of the minimum rotated rectangle
+    return min_rotated_rect.area
+
+assert a == 1
 """
 
 v2_completion8 = """
@@ -509,6 +604,19 @@ def test_extract_code_from_freeform_completion_v2():
                                                      exactly_match=True)
     assert r7.strip() == v2_result7.strip()
 
+    r7_, _ = extract_code_from_freeform_completion_v2(v2_completion7_,
+                                                      'python',
+                                                      first_block_only=True,
+                                                      exactly_match=True,
+                                                      remove_asserts=True)
+    assert r7_.strip() == v2_result7.strip()
+
+    r7_, _ = extract_code_from_freeform_completion_v2(v2_completion7_,
+                                                      'python',
+                                                      first_block_only=True,
+                                                      exactly_match=True)
+    assert r7_.strip() == v2_result7_.strip()
+
     r8, _ = extract_code_from_freeform_completion_v2(v2_completion8,
                                                      'csharp',
                                                      first_block_only=True,
@@ -545,3 +653,137 @@ def test_extract_code_from_freeform_completion_v2():
                                                       no_removal=True,
                                                       exactly_match=True)
     assert 'func main' not in r13 and 'package main' in r13
+
+
+default_completion_1 = '''
+To solve the problem of determining the minimum cost to make two binary strings equal through specified flip operations, we can break down the solution into a series of steps. The key is to identify the mismatches between the two strings and then decide the most cost-effective way to resolve those mismatches.
+
+Here's the implementation of the function `get_min_flip_cost_to_match`:
+
+```python
+def get_min_flip_cost_to_match(s1: str, s2: str, x: int) -> int:
+    """
+    You are given two binary strings s1 and s2 of length n, and a positive integer x.
+
+    You can perform the following operations on s1 any number of times:
+
+    - Choose two indices i and j, and flip s1[i] and s1[j]. The cost is x.
+
+    - Choose an index i < n - 1, and flip s1[i] and s1[i+1]. The cost is 1.
+
+    Return the minimum total cost to make s1 equal to s2, or -1 if it's impossible.
+
+    Flipping a character means changing 0 to 1 or 1 to 0.
+    e.g. assert get_min_flip_cost_to_match("1100","0011",3) == 2
+    """
+    
+    n = len(s1)
+    
+    # Count the number of mismatches
+    count_01 = 0  # Count of positions where s1 has '0' and s2 has '1'
+    count_10 = 0  # Count of positions where s1 has '1' and s2 has '0'
+    
+    for i in range(n):
+        if s1[i] != s2[i]:
+            if s1[i] == '0':
+                count_01 += 1
+            else:
+                count_10 += 1
+    
+    # If the number of mismatches is odd, it's impossible to make them equal
+    if (count_01 + count_10) % 2 != 0:
+        return -1
+    
+    # Calculate the minimum cost
+    # We can pair up mismatches (01 with 10) using the cost of 1
+    pairs = min(count_01, count_10)
+    remaining_01 = count_01 - pairs
+    remaining_10 = count_10 - pairs
+    
+    # Each pair can be resolved with cost 1
+    cost = pairs
+    
+    # Remaining mismatches can only be resolved using the x cost operation
+    # Each remaining mismatch requires a flip of two indices
+    cost += (remaining_01 + remaining_10) // 2 * x
+    
+    return cost
+
+# Example usage
+assert get_min_flip_cost_to_match("1100", "0011", 3) == 2
+```
+
+### Explanation:
+1. **Mismatch Counting**: We iterate through both strings and count how many positions have mismatches of type `01` (where `s1` has `0` and `s2` has `1`) and `10` (where `s1` has `1` and `s2` has `0`).
+
+2. **Odd Mismatches Check**: If the total number of mismatches is odd, it's impossible to make the strings equal, so we return `-1`.
+
+3. **Cost Calculation**:
+   - We can resolve pairs of mismatches (one `01` and one `10`) at a cost of `1` each.
+   - Any remaining mismatches (if they exist) will need to be resolved using the more expensive operation, which costs `x`. Each remaining mismatch requires two flips, so we calculate the cost accordingly.
+
+This approach ensures that we find the minimum cost efficiently.
+'''
+
+
+def test_custom_code_block():
+    res = default_extract_helper(completion=default_completion_1,
+                                 language='python',
+                                 custom_extract_logic='''
+assert_token = '\\nassert'
+code_blocks = extract_fenced_code(completion)
+completion = code_blocks[0].code
+index = completion.find(assert_token)
+if index != -1:
+    completion = completion[:index]
+submit_code_blocks([CodeBlock(priority=40, code=completion, language='python')])
+''')
+    assert res == '''def get_min_flip_cost_to_match(s1: str, s2: str, x: int) -> int:
+    """
+    You are given two binary strings s1 and s2 of length n, and a positive integer x.
+
+    You can perform the following operations on s1 any number of times:
+
+    - Choose two indices i and j, and flip s1[i] and s1[j]. The cost is x.
+
+    - Choose an index i < n - 1, and flip s1[i] and s1[i+1]. The cost is 1.
+
+    Return the minimum total cost to make s1 equal to s2, or -1 if it's impossible.
+
+    Flipping a character means changing 0 to 1 or 1 to 0.
+    e.g. assert get_min_flip_cost_to_match("1100","0011",3) == 2
+    """
+    
+    n = len(s1)
+    
+    # Count the number of mismatches
+    count_01 = 0  # Count of positions where s1 has '0' and s2 has '1'
+    count_10 = 0  # Count of positions where s1 has '1' and s2 has '0'
+    
+    for i in range(n):
+        if s1[i] != s2[i]:
+            if s1[i] == '0':
+                count_01 += 1
+            else:
+                count_10 += 1
+    
+    # If the number of mismatches is odd, it's impossible to make them equal
+    if (count_01 + count_10) % 2 != 0:
+        return -1
+    
+    # Calculate the minimum cost
+    # We can pair up mismatches (01 with 10) using the cost of 1
+    pairs = min(count_01, count_10)
+    remaining_01 = count_01 - pairs
+    remaining_10 = count_10 - pairs
+    
+    # Each pair can be resolved with cost 1
+    cost = pairs
+    
+    # Remaining mismatches can only be resolved using the x cost operation
+    # Each remaining mismatch requires a flip of two indices
+    cost += (remaining_01 + remaining_10) // 2 * x
+    
+    return cost
+
+# Example usage'''

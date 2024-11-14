@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import re
 from typing import Any, Dict, List
 
 from sandbox.database import get_row_by_id_in_table, get_rows_in_table
@@ -31,11 +30,12 @@ from sandbox.utils.common import ensure_json
 from sandbox.utils.extraction import extract_code_from_freeform_completion
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
+
 def postprocess_completion(completion, stop_words=["\nassert", '\n"""']):
     if '[DONE]' in completion:
         completion = completion[:completion.index('[DONE]')]
 
-    code,_ = extract_code_from_freeform_completion(completion, 'python', first_block_only=True)
+    code, _ = extract_code_from_freeform_completion(completion, 'python', first_block_only=True)
 
     for st in stop_words:
         index = code.find(st)
@@ -44,22 +44,13 @@ def postprocess_completion(completion, stop_words=["\nassert", '\n"""']):
     return code
 
 
-class MBPPDataset(CodingDataset, dataset_ids=['mbpp']):
-    table_names = {
-        'mbpp': 'code_eval_mbpp',
-    }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        return {'mbpp': 500}[dataset_id]
+class MBPPDataset(CodingDataset):
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:
-        rows = await get_rows_in_table(
-            request,
-            cls.get_table_name(request.dataset),
-            columns=['id', 'content', 'labels', 'test_list']
-        )
+        rows = await get_rows_in_table(request,
+                                       cls.get_table_name(request.dataset),
+                                       columns=['id', 'content', 'labels', 'test_list'])
         return [cls._generate_single_prompt(r, request.config) for r in rows]
 
     @classmethod
@@ -83,7 +74,7 @@ class MBPPDataset(CodingDataset, dataset_ids=['mbpp']):
         else:
             tests = '\n'.join(row['test_list'])
             prompt = f"You are an expert Python programmer, and here is your task: {row['content']} Your code should pass these tests:\n\n{tests}"
-    
+
         return Prompt(id=row['id'], prompt=prompt, labels=row['labels'])
 
     @classmethod

@@ -976,14 +976,7 @@ def _b64encode(content: str) -> str:
     return base64.b64encode(content.encode('utf-8')).decode('utf-8')
 
 
-class LiveCodeBenchDataset(CodingDataset, dataset_ids=['live_code_bench_v1']):
-    table_names = {
-        'live_code_bench_v1': 'code_eval_live_code_bench_v1',
-    }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> str:
-        return {'live_code_bench_v1': 511}[dataset_id]
+class LiveCodeBenchDataset(CodingDataset):
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:
@@ -1024,7 +1017,7 @@ class LiveCodeBenchDataset(CodingDataset, dataset_ids=['live_code_bench_v1']):
             columns=['id', 'labels', 'content', 'test'],
         )
         labels = ensure_json(row, 'labels')
-        timeout = request.config.run_timeout or 6
+        timeout = int(request.config.run_timeout or 6)
         try:
             test_cases = ensure_json(row, 'test')
         except:

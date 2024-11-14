@@ -87,10 +87,10 @@ async def load_cache(datalake, sqlite, tables):
 
 
 async def get_datalake_database() -> Database:
-    user = config.online_judge.database.backend.user
-    password = config.online_judge.database.backend.password
-    host = config.online_judge.database.backend.host
-    port = config.online_judge.database.backend.port
+    user = config.dataset.database.backend.user
+    password = config.dataset.database.backend.password
+    host = config.dataset.database.backend.host
+    port = config.dataset.database.backend.port
 
     db = Database(f'mysql+aiomysql://{user}:{password}@[{host}]:{port}')
     await db.connect()
@@ -99,10 +99,10 @@ async def get_datalake_database() -> Database:
 
 
 async def get_sqlite_database() -> Database:
-    if config.online_judge.database.cache.path == 'memory':
+    if config.dataset.database.cache.path == 'memory':
         db = Database('sqlite+aiosqlite:///file::memory:?cache=shared', uri=True)
     else:
-        db_path = os.path.abspath(os.path.join(__file__, '../../', config.online_judge.database.cache.path))
+        db_path = os.path.abspath(os.path.join(__file__, '../../', config.dataset.database.cache.path))
         db = Database(f'sqlite+aiosqlite://{db_path}', uri=True)
     await db.connect()
     logger.info(f'sqlite connected')
@@ -112,11 +112,11 @@ async def get_sqlite_database() -> Database:
 @max_concurrency(1)
 async def get_databases():
     global __database_datalake, __database_sqlite
-    if __database_datalake is None and config.online_judge.database.backend.type == 'mysql':
+    if __database_datalake is None and config.dataset.database.backend.type == 'mysql':
         __database_datalake = await get_datalake_database()
-    if __database_sqlite is None and config.online_judge.database.cache is not None:
+    if __database_sqlite is None and config.dataset.database.cache is not None:
         __database_sqlite = await get_sqlite_database()
-        for source in config.online_judge.database.cache.sources:
+        for source in config.dataset.database.cache.sources:
             if source.type == 'local':
                 samples_path = os.path.abspath(os.path.join(__file__, '../../', source.path))
                 await jsonls_to_tables(samples_path, __database_sqlite)

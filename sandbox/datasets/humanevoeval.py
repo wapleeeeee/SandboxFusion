@@ -14,7 +14,7 @@
 
 import inspect
 
-from sandbox.datasets import HumanEvalDataset
+from sandbox.datasets.humaneval import HumanEvalDataset
 from sandbox.datasets.types import SubmitRequest
 from sandbox.utils.extraction import extract_code_from_freeform_completion
 
@@ -32,8 +32,7 @@ def get_categories(results):
     return categories_counts
 
 
-class EvoEvalDataset(HumanEvalDataset, dataset_ids=['evoeval']):
-    table_names = {'evoeval': 'code_eval_EvoEval'}
+class EvoEvalDataset(HumanEvalDataset):
 
     @classmethod
     def _gen_pretrain_code(cls, request: SubmitRequest, row) -> str:
@@ -50,6 +49,43 @@ class EvoEvalDataset(HumanEvalDataset, dataset_ids=['evoeval']):
         source = f'''
 {inspect.getsource(get_categories)}
 
+def pass_at_k_v2(samples, n: int, k: int) -> float:
+    import numpy
+
+    def codex_estimator(n: int, c: int, k: int) -> float:
+        """
+        Calculates 1 - comb(n - c, k) / comb(n, k).
+        """
+        if n - c < k:
+            return 1.0
+        return 1.0 - numpy.prod(1.0 - k / numpy.arange(n - c + 1, n + 1))
+
+    from collections import defaultdict
+    """ Compute Pass@k metric.
+        Args:
+            samples: list of (task_name/id, passed) pair
+            n: total sample times
+        Returns:
+            final average Pass@k score
+    """
+    correct_dict = defaultdict(int)
+    for name, passed in samples:
+        if passed:
+            correct_dict[name] += 1
+        else:
+            correct_dict[name] += 0
+
+    final_scores = []
+    for _, c in correct_dict.items():
+        score = codex_estimator(n, c, k)
+        final_scores.append(score)
+    if final_scores:
+        final_score = sum(final_scores) / len(final_scores)
+    else:
+        final_score = 0.0  # empty case
+
+    return final_score
+
 def get_metrics(results):
     categories = get_categories(results)
     performance = {{}}
@@ -57,7 +93,7 @@ def get_metrics(results):
         for k in k_targets:
             if repeats < k:
                 continue
-            pak = utils_coding.pass_at_k_v2([(s.id, s.accepted) for s in samples], repeats, k)
+            pak = pass_at_k_v2([(s.id, s.accepted) for s in samples], repeats, k)
             performance[f'{{cat}}/Pass@k={{k}}'] = pak
     return performance
 '''

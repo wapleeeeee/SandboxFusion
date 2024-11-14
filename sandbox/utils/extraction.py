@@ -164,6 +164,8 @@ def extract_custom_code(completion: str, custom_logic: str) -> List[CodeBlock]:
         'CodeBlock': CodeBlock,
         'completion': completion,
         'submit_code_blocks': submit,
+        'extract_fenced_code': extract_fenced_code,
+        'extract_heuristic_code': extract_heuristic_code,
     }
     exec(custom_logic, context)
     logger.info(f'got {len(blocks)} custom code blocks')
@@ -212,6 +214,15 @@ def extract_code_from_freeform_completion(completion: str,
     # step1. match the complete fenced block
     code_blocks = extract_fenced_code(completion)
 
+    if kwargs.get('is_fewshot_task') is True:
+        first_sp_block_idx = next((i for i, block in enumerate(code_blocks) if block.language == language), -1)
+        first_un_block_idx = next((i for i, block in enumerate(code_blocks) if block.language == ''), -1)
+        first_block_idx = first_un_block_idx if first_sp_block_idx == -1 else first_sp_block_idx
+        if first_block_idx != -1:
+            code_blocks = code_blocks[:first_block_idx + 1]
+            code_blocks = code_blocks[:first_block_idx + 1]
+        logger.debug(f'select first code block for fewshot task: {code_blocks}')
+
     # drop the blocks which the language tag different with target programming language
     if kwargs.get('exactly_match') == True and language:
         other_tag = set(sum([v for k, v in language_to_aliases.items() if k != language], []))
@@ -246,6 +257,17 @@ def extract_code_from_freeform_completion(completion: str,
         completion = '\n\n'.join([b.code for b in code_blocks]).replace('\r', '')
 
     if language == 'python':
+
+        if kwargs.get('remove_asserts') is True:
+            #remove assert statements
+            lines = []
+            for line in completion.split('\n'):
+                if line.startswith('assert '):
+                    continue
+                else:
+                    lines.append(line)
+            completion = '\n'.join(lines)
+
         if 'if __name__ == \"__main__\":' in completion:
             next_line = completion.index('if __name__ == \"__main__\":')
             completion = completion[:next_line].strip()
@@ -306,6 +328,15 @@ def extract_code_from_freeform_completion_v2(completion: str,
     code_blocks = extract_fenced_code(completion)
     code_blocks = adjust_code_block(code_blocks, language)  # solve llama3 error format
 
+    if kwargs.get('is_fewshot_task') is True:
+        first_sp_block_idx = next((i for i, block in enumerate(code_blocks) if block.language == language), -1)
+        first_un_block_idx = next((i for i, block in enumerate(code_blocks) if block.language == ''), -1)
+        first_block_idx = first_un_block_idx if first_sp_block_idx == -1 else first_sp_block_idx
+        if first_block_idx != -1:
+            code_blocks = code_blocks[:first_block_idx + 1]
+            code_blocks = code_blocks[:first_block_idx + 1]
+        logger.debug(f'select first code block for fewshot task: {code_blocks}')
+
     # drop the blocks which the language tag different with target programming language
     if kwargs.get('exactly_match') == True and language:
         target_tag = language_to_aliases.get(language, [])
@@ -358,6 +389,14 @@ def postprocess_completion_v2(completion: str, language: str, no_removal: bool, 
         if idx is not None:
             lines = lines[:idx]
         completion = '\n'.join(lines)
+
+        if kwargs.get('remove_asserts') is True:
+            lines = []
+            for line in completion.splitlines():
+                if not line.startswith('assert '):
+                    lines.append(line)
+            completion = '\n'.join(lines)
+
     elif language in ['cpp', 'c']:
         if 'int main()' in completion:
             next_line = completion.index('int main()')

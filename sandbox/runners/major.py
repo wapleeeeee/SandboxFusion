@@ -80,7 +80,7 @@ async def run_python(args: CodeRunArgs) -> CodeRunResult:
                                   tmp_dir,
                                   get_python_rt_env('sandbox-runtime'),
                                   args,
-                                  set_uid=config.runner.set_uid)
+                                  set_uid=config.sandbox.set_uid)
 
 
 async def run_pytest(args: CodeRunArgs) -> CodeRunResult:

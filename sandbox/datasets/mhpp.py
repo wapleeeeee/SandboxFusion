@@ -45,14 +45,7 @@ def get_categories(results):
     return categories_counts
 
 
-class MHPPDataset(CodingDataset, dataset_ids=['mhpp']):
-    table_names = {
-        'mhpp': 'code_eval_mhpp',
-    }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        return {'mhpp': 140}[dataset_id]
+class MHPPDataset(CodingDataset):
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:

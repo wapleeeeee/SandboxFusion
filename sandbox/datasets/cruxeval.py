@@ -238,15 +238,9 @@ assert f(??) == {expected_output}
 """
 
 
-class CruxEvalDataset(CodingDataset, dataset_ids=['cruxeval', 'cruxeval_x']):
+class CruxEvalDataset(CodingDataset):
     WRAP_PROMPT_INS = 'Please respond in English and use Markdown format.####Instruction:'
     WRAP_PROMPT_RES = 'Response:'
-
-    table_names = {'cruxeval': 'code_eval_cruxeval', 'cruxeval_x': 'code_eval_cruxeval_x'}
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        return {'cruxeval': 800, 'cruxeval_x': 13402}[dataset_id]
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:

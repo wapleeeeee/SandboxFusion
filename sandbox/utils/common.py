@@ -108,5 +108,30 @@ def ensure_php_tag_in_string(php_code: str) -> str:
 
 def ensure_json(obj: Dict[str, Any], key: str) -> Dict[str, Any]:
     if isinstance(obj[key], str):
-        obj[key] = json.loads(obj[key])
+        obj[key] = json.loads(obj[key], strict=False)
     return obj[key]
+
+
+def truncate_str(s: str, max_length: int = 1000, placeholder: str = '...') -> str:
+    """
+    Truncate string if it exceeds max_length by keeping both ends and adding placeholder in middle
+    
+    Args:
+        s: Input string
+        max_length: Maximum length limit, defaults to 1000
+        placeholder: String used as placeholder, defaults to '...'
+        
+    Returns:
+        Processed string, either original or truncated
+    """
+    if not s or len(s) <= max_length:
+        return s
+
+    # Ensure at least 1 character on each side of placeholder
+    if max_length < len(placeholder) + 2:
+        max_length = len(placeholder) + 2
+
+    # Calculate length to keep at beginning and end
+    keep_length = (max_length - len(placeholder)) // 2
+
+    return s[:keep_length] + placeholder + s[-keep_length:]

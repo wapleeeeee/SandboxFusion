@@ -17,7 +17,6 @@ from enum import Enum
 from typing import Any, Dict, List, Literal, Optional
 
 from sandbox.database import get_row_by_id_in_table, get_rows_in_table
-from sandbox.utils.common import ensure_json
 from sandbox.datasets.types import (
     CodingDataset,
     EvalResult,
@@ -32,6 +31,7 @@ from sandbox.datasets.types import (
     TestConfig,
 )
 from sandbox.utils.antihack import antis
+from sandbox.utils.common import ensure_json
 from sandbox.utils.extraction import extract_code_from_freeform_completion_v2
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 
@@ -60,19 +60,7 @@ def append_test(code: str, test: str):
     return full_code
 
 
-class MBXPDataset(CodingDataset,
-                  dataset_ids=['mbxp_v1_en', 'humanevalds_v1_en', 'oodtest_v1_zh', 'humanevalds_v2_en', 'mbxp_v2_en']):
-    table_names = {
-        'mbxp_v1_en': 'code_eval_mbxp_v1_en',
-        'humanevalds_v1_en': 'code_eval_humanevalds_v1_en',
-        'oodtest_v1_zh': 'code_eval_oodtest_v1_zh',
-        'humanevalds_v2_en': 'code_eval_humanevalds_v2_en',
-        'mbxp_v2_en': 'code_eval_mbxp_v2_en',
-    }
-
-    @classmethod
-    async def get_num_problems(cls, dataset_id: str) -> int:
-        return {'mbxp_v1_en': 4979, 'humanevalds_v1_en': 2230, 'oodtest_v1_zh': 179}[dataset_id]
+class MBXPDataset(CodingDataset):
 
     @classmethod
     async def get_prompts(cls, request: GetPromptsRequest) -> List[Prompt]:
@@ -82,7 +70,7 @@ class MBXPDataset(CodingDataset,
             columns=['id', 'labels', 'content'],
         )
         for row in rows:
-            row['labels'] = ensure_json(row, 'labels')
+            ensure_json(row, 'labels')
         prompt_language = 'en' if '_en' in request.dataset else 'zh'
         return [cls._generate_single_prompt(r, request.config, prompt_language) for r in rows]
 

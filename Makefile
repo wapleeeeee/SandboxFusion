@@ -11,7 +11,7 @@ build-server-image:
 	docker build . -f scripts/Dockerfile.server -t sandbox:server
 
 test:
-	pytest -m "not cuda and not datalake and not dp_eval" -n $(TEST_NP)
+	pytest -m "not cuda and not datalake and not dp_eval and not lean" -n $(TEST_NP)
 
 test-cuda:
 	pytest -m cuda
