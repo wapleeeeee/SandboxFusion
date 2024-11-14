@@ -1,5 +1,4 @@
 #!/bin/bash
-set -v
 
 if [ $# -ne 1 ]; then
     echo "Usage: $0 <branch-name>"
@@ -15,6 +14,7 @@ fi
 
 new_branch=${branch_name#gh-}
 
+echo "git push github $branch_name:$new_branch"
 git push github $branch_name:$new_branch
 
 echo "Successfully pushed branch '$new_branch' to github"
