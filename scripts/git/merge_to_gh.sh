@@ -50,6 +50,8 @@ declare -a EXCLUDE_FILES=(
     "sandbox/tests/datasets/test_mining_11697_v1.py"
     "sandbox/tests/datasets/test_python_auto.py"
     "sandbox/tests/datasets/test_rl_oj_*.py"
+    "sandbox/tests/runners/test_lean.py"
+    "scripts/git/*"
     "scripts/Dockerfile.faas"
     "scripts/Dockerfile.merlin"
     "scripts/export_datalake.py"
