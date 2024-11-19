@@ -6,6 +6,9 @@
   "scripts": {
     "test": "jest"
   },
+  "jest": {
+    "maxWorkers": 2
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
