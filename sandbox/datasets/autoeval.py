@@ -68,7 +68,7 @@ def append_test(code: str, test: str, repr_code=False):
 
 
 def postprocess_full_code(code, language):
-    if language == 'go':
+    if language in ['go', 'go_test']:
         packages = set(re.findall(r'package\s+(\w+)', code))
         code = re.sub(r'package\s+(\w+)', '', code)
         # combine all imports
@@ -192,7 +192,13 @@ class AutoEvalDataset(CodingDataset):
 
             repr_code = request.config.extra.get('repr_code', False)
 
-            full_code = append_test(code, row['test']['code'], repr_code)
+            if programming_language == 'html' and '#<INSERT>' not in row['test']['code']:
+                # in this case, we just put html content into index.html to avoid escaping
+                asset['index.html'] = base64.b64encode(code.encode('utf-8')).decode('utf-8')
+                full_code = row['test']['code']
+            else:
+                full_code = append_test(code, row['test']['code'], repr_code)
+
             full_code = postprocess_full_code(full_code, execution_language)
 
             if append_flag:
