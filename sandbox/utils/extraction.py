@@ -357,7 +357,12 @@ def extract_code_from_freeform_completion_v2(completion: str,
         if code_blocks:
             extracted_type = ExtractedType.Heuristic
 
-    if first_block_only:
+    if kwargs.get('code_block_idx') is not None:
+        try:
+            completion = code_blocks[kwargs['code_block_idx']].code.replace('\r', '')
+        except:
+            completion = ''
+    elif first_block_only:
         if code_blocks:
             completion = code_blocks[0].code.replace('\r', '')
         else:
