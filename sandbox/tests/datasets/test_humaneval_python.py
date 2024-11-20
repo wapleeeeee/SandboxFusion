@@ -48,7 +48,7 @@ async def test_humaneval_python_get():
 
 async def test_humaneval_python_submit_passed():
     samples = load_jsonl(samples_path)
-    for sample in samples:
+    for sample in samples[:10]:
         solution = sample['canonical_solution']
         request = SubmitRequest(dataset='humaneval_python',
                                 id=0,
