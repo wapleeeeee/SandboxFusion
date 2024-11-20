@@ -135,3 +135,9 @@ def truncate_str(s: str, max_length: int = 1000, placeholder: str = '...') -> st
     keep_length = (max_length - len(placeholder)) // 2
 
     return s[:keep_length] + placeholder + s[-keep_length:]
+
+
+def load_jsonl(file_path):
+    with open(file_path, 'r') as f:
+        data = [json.loads(line) for line in f.readlines()]
+    return data
