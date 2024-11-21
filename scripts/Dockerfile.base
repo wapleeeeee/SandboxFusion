@@ -6,6 +6,8 @@ RUN bash ./scripts/tuna-apt.sh 20.04 \
     && apt-get update && apt-get install -y curl npm git nano wget vim unzip sudo cgroup-tools iproute2 iptables \
     # iverilog build deps
     autoconf gperf flex bison \
+    # bash scripting utils
+    bc \
     && mkdir -p /workspace/download
 
 # python 3.11 & poetry
@@ -17,8 +19,8 @@ RUN wget https://veml.tos-cn-beijing.volces.com/condarc -O ~/.condarc && \
 RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.7.0 python3 -
 ENV PATH=/root/.local/bin:$PATH
 
-# golang 1.21.6
-RUN curl -o /workspace/download/go.tar.gz -SL https://go.dev/dl/go1.21.6.linux-amd64.tar.gz \
+# golang 1.23.3
+RUN curl -o /workspace/download/go.tar.gz -SL https://go.dev/dl/go1.23.3.linux-amd64.tar.gz \
     && tar -zxf /workspace/download/go.tar.gz -C /usr/local && rm /workspace/download/go.tar.gz
 ENV PATH=/bin:/usr/local/go/bin:$PATH
 
