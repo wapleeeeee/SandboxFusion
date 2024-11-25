@@ -28,6 +28,7 @@ import {
   sandboxLanguageList,
 } from "../constants";
 import { getFormatJson } from "../utils";
+import beautify from "json-beautify";
 
 const { Row, Col } = Grid;
 
@@ -88,15 +89,34 @@ const OnlineJudge: React.FC = () => {
     run: getQuestionIdList,
   } = useRequest(
     () => {
-      return onlineJudgeService.getQuestionIdList({
-        dataset,
+      return onlineJudgeService.getQuestionFromHuggingFace({
+        provided_data: datasets.find((item) => item.id === dataset)
+          ?.huggingFace,
         offset: 0,
-        limit: 100000,
-        config: getConfigJson(),
+        limit: 100,
       });
     },
-    { ready: Boolean(dataset), manual: false, refreshDeps: [dataset] }
+    {
+      ready: Boolean(dataset),
+      manual: false,
+      refreshDeps: [dataset],
+      onSuccess: (res) => {
+        if (res.length) {
+          setId("0");
+          setConfig(
+            getFormatJson({
+              dataset_type: getCurrentDatasetType(),
+              provided_data: res?.[0]?.row,
+            }) as string
+          );
+        }
+      },
+    }
   );
+
+  const getCurrentDatasetType = (datasetName?: string) =>
+    datasets?.find((item) => item.id === (datasetName || dataset))
+      ?.dataset_type;
 
   // 获取Prompt
   const {
@@ -105,14 +125,17 @@ const OnlineJudge: React.FC = () => {
     run: getPromptRes,
   } = useRequest(
     () => {
+      const row = questionIdList?.[Number(id)]?.row;
       return onlineJudgeService.getPromptById({
-        config: getConfigJson(),
-        dataset,
-        id,
+        config: {
+          provided_data: [row],
+          dataset_type: getCurrentDatasetType(),
+        },
+        dataset: dataset,
       });
     },
     {
-      ready: Boolean(dataset) && Boolean(id),
+      ready: Boolean(dataset) && id !== undefined,
       manual: false,
       refreshDeps: [dataset, id],
     }
@@ -127,11 +150,12 @@ const OnlineJudge: React.FC = () => {
       if (questionMode === QuestionMode.custom) {
         return onlineJudgeService.submit(getConfigJson(customConfig));
       }
+      const questionRow = questionIdList?.[Number(id)]?.row;
       return onlineJudgeService.submit({
         dataset,
+        id: questionRow?.id || questionRow?.task_id,
         config: getConfigJson(),
         completion,
-        id,
       });
     },
     { manual: true }
@@ -153,8 +177,20 @@ const OnlineJudge: React.FC = () => {
                 style={{ width: 190 }}
                 prefix={`题库`}
                 value={dataset}
-                onChange={setDataset}
-                options={getSelectOptionsByStringList(datasets)}
+                onChange={(val) => {
+                  setDataset(val);
+                  setId(undefined);
+                  setConfig(
+                    getFormatJson({
+                      dataset_type: getCurrentDatasetType(val),
+                    }) as string
+                  );
+                }}
+                options={datasets?.map((item) => ({
+                  label: item.id,
+                  value: item.id,
+                  extra: item,
+                }))}
                 loading={listDatasetsLoading}
                 allowCreate
                 {...SELECT_SEARCH_PROPS}
@@ -167,8 +203,19 @@ const OnlineJudge: React.FC = () => {
                 disabled={!dataset}
                 placeholder={dataset ? `请选择` : `请先选择题库`}
                 value={id}
-                onChange={setId}
-                options={getSelectOptionsByStringList(questionIdList)}
+                onChange={(id) => {
+                  setId(id);
+                  setConfig(
+                    getFormatJson({
+                      dataset_type: getCurrentDatasetType(),
+                      provided_data: questionIdList?.[Number(id)]?.row,
+                    }) as string
+                  );
+                }}
+                options={questionIdList?.map((item, index) => ({
+                  label: item.row.id || item.row.task_id,
+                  value: index.toString(),
+                }))}
                 loading={questionIdListLoading}
                 {...SELECT_SEARCH_PROPS}
                 triggerProps={SELECT_TRIGGER_PROPS}
@@ -210,7 +257,7 @@ const OnlineJudge: React.FC = () => {
       {!promptRes?.prompt || renderType === RenderType.PLAINTEXT ? (
         <pre className={css.pre}>{promptRes?.prompt}</pre>
       ) : (
-        <div style={{ minHeight: 200 }}>
+        <div style={{ minHeight: 200, maxHeight: 500, overflowY: "auto" }}>
           {promptRes?.prompt && (
             <div
               dangerouslySetInnerHTML={{
@@ -227,7 +274,7 @@ const OnlineJudge: React.FC = () => {
         </Typography.Title>
       </Space>
       <MonacoEditor
-        height={200}
+        height={300}
         value={completion}
         onChange={(val) => setCompletion(val as string)}
       />
@@ -239,7 +286,7 @@ const OnlineJudge: React.FC = () => {
         >{`配置`}</Typography.Title>
       </Space>
       <MonacoEditor
-        height={200}
+        height={300}
         value={config}
         onChange={(val) => setConfig(val as string)}
         language="json"

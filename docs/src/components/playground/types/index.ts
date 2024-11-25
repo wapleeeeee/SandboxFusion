@@ -52,8 +52,10 @@ export type QuestionIdListRequest = {
 
 export type PromptByIdRequest = {
   dataset?: string;
-  id?: string;
-  config?: Record<string, any>;
+  config?: {
+    dataset_type?: string;
+    provided_data: HuggingFace[];
+  };
 };
 
 export type PromptRes = {
@@ -72,6 +74,7 @@ export type PromptRes = {
 
 export interface OnlineJudgeSubmitRequest extends PromptByIdRequest {
   completion?: string;
+  id?: string;
 }
 
 export type OnlineJudgeSubmitResponseTestItem = {
@@ -115,3 +118,15 @@ export enum RenderType {
   TAG = "Tag",
   VIDEO = "Video",
 }
+
+export type HuggingFace = {
+  id: string;
+  subset?: string;
+  split?: string;
+};
+
+export type Dataset = {
+  id: string;
+  huggingFace: HuggingFace;
+  dataset_type?: string;
+};
