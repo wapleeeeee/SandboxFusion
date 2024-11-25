@@ -1,0 +1,17 @@
+---
+sidebar_position: 3
+---
+import DatasetSelector from '@site/src/components/DatasetSelector';
+import { docWithType } from '@site/src/components/DatasetSelector/docGenerator';
+
+# MBPP
+
+This is the test set of [Mostly Basic Python Problems Dataset](https://github.com/google-research/google-research/tree/master/mbpp), with id in [11, 510].
+
+<DatasetSelector datasetKey="MBPP" generateDocFunc={docWithType} configFields={[
+  { name: 'run_timeout', type: 'number', description: 'Execution timeout in seconds' },
+]} initialConfig={{
+  run_timeout: 20,
+}} />
+
+
