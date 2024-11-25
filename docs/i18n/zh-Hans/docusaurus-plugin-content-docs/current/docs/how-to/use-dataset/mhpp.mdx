@@ -1,0 +1,19 @@
+---
+sidebar_position: 4
+---
+import DatasetSelector from '@site/src/components/DatasetSelector';
+import { docWithType } from '@site/src/components/DatasetSelector/docGenerator';
+
+# MHPP
+
+Source: [MHPP: Exploring the Capabilities and Limitations of Language Models Beyond Basic Code Generation](https://github.com/SparksofAGI/MHPP)
+
+MHPP does not provide test cases for the problems, and submissions can only be checked by the author. Here, in order to partially test MHPP, we keep only one example from the released samples as an illustration, and use the remaining samples (usually two) as test cases. Users can modify the data to add more test cases on their own.
+
+The initial release of MHPP contains 140 problems, with the full 210 version released later. Both versions are provided.
+
+<DatasetSelector datasetKey="MHPP" generateDocFunc={docWithType} configFields={[
+  { name: 'run_timeout', type: 'number', description: 'Execution timeout in seconds' },
+]} initialConfig={{
+  run_timeout: 20,
+}} />

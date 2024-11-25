@@ -25,6 +25,27 @@ dataset:
       dataset_tables:
         cruxeval: code_eval_cruxeval
         cruxeval_x: code_eval_cruxeval_x
+    - module_path: sandbox.datasets.multiple
+      class_name: MultiPLEDataset
+      dataset_tables:
+        multiple_cpp: code_eval_multiple_cpp
+        multiple_ts: code_eval_multiple_ts
+        multiple_sh: code_eval_multiple_sh
+        multiple_cs: code_eval_multiple_cs
+        multiple_go: code_eval_multiple_go
+        multiple_java: code_eval_multiple_java
+        multiple_lua: code_eval_multiple_lua
+        multiple_js: code_eval_multiple_js
+        multiple_php: code_eval_multiple_php
+        multiple_pl: code_eval_multiple_pl
+        multiple_rkt: code_eval_multiple_rkt
+        multiple_r: code_eval_multiple_r
+        multiple_rs: code_eval_multiple_re
+        multiple_scala: code_eval_multiple_scala
+        multiple_swift: code_eval_multiple_swift
+        multiple_rb: code_eval_multiple_rb
+        multiple_d: code_eval_multiple_d
+        multiple_jl: code_eval_multiple_jl
     - module_path: sandbox.datasets.humaneval
       class_name: HumanEvalDataset
       dataset_tables:
