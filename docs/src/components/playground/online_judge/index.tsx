@@ -213,7 +213,7 @@ const OnlineJudge: React.FC = () => {
                   );
                 }}
                 options={questionIdList?.map((item, index) => ({
-                  label: index + 1,
+                  label: `${index + 1}`,
                   value: index.toString(),
                 }))}
                 loading={questionIdListLoading}

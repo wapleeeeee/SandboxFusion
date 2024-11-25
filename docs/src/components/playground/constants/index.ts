@@ -49,7 +49,7 @@ export const SELECT_SEARCH_PROPS: SelectProps = {
     if (typeof inputValue !== "string" || !inputValue) {
       return true;
     }
-    const { value, children } = option?.props || {};
+    const { children } = option?.props || {};
     const contains = (input: string) => {
       if (
         typeof input === "string" &&
@@ -59,6 +59,6 @@ export const SELECT_SEARCH_PROPS: SelectProps = {
       }
       return false;
     };
-    return contains(value) || contains(children);
+    return contains(children);
   },
 };
