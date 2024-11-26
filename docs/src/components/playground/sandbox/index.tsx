@@ -87,7 +87,7 @@ const Sandbox: React.FC = () => {
   const codePart = (
     <Form
       form={form}
-      labelCol={{ style: { width: 60, flex: "none" } }}
+      labelCol={{ style: { width: 65, flex: "none" } }}
       wrapperCol={{ style: { minWidth: 0, flex: 1 } }}
     >
       <Form.Item label={`Code`} field={"code"}>
@@ -124,7 +124,7 @@ const Sandbox: React.FC = () => {
       </Form.Item>
       <Form.Item label={`Config`}>
         <Form.Item
-          labelCol={{ style: { width: 130, flex: "none" } }}
+          labelCol={{ style: { width: 140, flex: "none" } }}
           initialValue={60}
           field={"compile_timeout"}
           label={`Compile Timeout`}
@@ -132,7 +132,7 @@ const Sandbox: React.FC = () => {
           <InputNumber min={1} suffix={`s`} />
         </Form.Item>
         <Form.Item
-          labelCol={{ style: { width: 130, flex: "none" } }}
+          labelCol={{ style: { width: 140, flex: "none" } }}
           initialValue={60}
           field={"run_timeout"}
           label={`Run Timeout`}

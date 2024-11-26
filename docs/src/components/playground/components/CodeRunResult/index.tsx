@@ -130,7 +130,7 @@ const CodeRunResult: React.FC<CodeRunResultProps> = (props) => {
         <Col flex="none">
           {data?.executor_pod_name && (
             <Typography.Text copyable={{ text: data?.executor_pod_name }}>
-              Execution Node
+              Execution Node:&nbsp;
               {data?.executor_pod_name}
             </Typography.Text>
           )}
