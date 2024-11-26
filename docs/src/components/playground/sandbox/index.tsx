@@ -72,14 +72,14 @@ const Sandbox: React.FC = () => {
         <Typography.Title
           style={{ margin: 0 }}
           heading={6}
-        >{`代码沙盒`}</Typography.Title>
+        >{`Code Sandbox`}</Typography.Title>
       </Col>
       <Col flex="none">
         <Button
           loading={loading}
           type="primary"
           onClick={doSubmit}
-        >{`提交`}</Button>
+        >{`Submit`}</Button>
       </Col>
     </Row>
   );
@@ -87,10 +87,10 @@ const Sandbox: React.FC = () => {
   const codePart = (
     <Form
       form={form}
-      labelCol={{ style: { width: 50, flex: "none" } }}
+      labelCol={{ style: { width: 60, flex: "none" } }}
       wrapperCol={{ style: { minWidth: 0, flex: 1 } }}
     >
-      <Form.Item label={`代码`} field={"code"}>
+      <Form.Item label={`Code`} field={"code"}>
         <SmartCodeEditor
           allowLanguageList={sandboxLanguageList}
           languageSelectEnabled
@@ -101,7 +101,7 @@ const Sandbox: React.FC = () => {
         />
       </Form.Item>
       <Form.Item
-        label={`附件`}
+        label={`File`}
         extra={
           fileList.length ? (
             <Space direction="vertical" size={4}>
@@ -119,19 +119,25 @@ const Sandbox: React.FC = () => {
             return false;
           }}
         >
-          <Button type="outline" icon={<IconUpload />}>{`点击上传`}</Button>
+          <Button type="outline" icon={<IconUpload />}>{`Upload`}</Button>
         </Upload>
       </Form.Item>
-      <Form.Item label={`配置`}>
+      <Form.Item label={`Config`}>
         <Form.Item
+          labelCol={{ style: { width: 130, flex: "none" } }}
           initialValue={60}
           field={"compile_timeout"}
-          label={`编译超时`}
+          label={`Compile Timeout`}
         >
-          <InputNumber min={1} suffix={`秒`} />
+          <InputNumber min={1} suffix={`s`} />
         </Form.Item>
-        <Form.Item initialValue={60} field={"run_timeout"} label={`运行超时`}>
-          <InputNumber min={1} suffix={`秒`} />
+        <Form.Item
+          labelCol={{ style: { width: 130, flex: "none" } }}
+          initialValue={60}
+          field={"run_timeout"}
+          label={`Run Timeout`}
+        >
+          <InputNumber min={1} suffix={`s`} />
         </Form.Item>
       </Form.Item>
     </Form>
@@ -143,7 +149,7 @@ const Sandbox: React.FC = () => {
     <Empty
       style={{ paddingTop: 100 }}
       icon={errorMsg ? <IconCloseCircleFill /> : undefined}
-      description={errorMsg || `暂无执行记录`}
+      description={errorMsg || `No Data`}
     />
   );
 

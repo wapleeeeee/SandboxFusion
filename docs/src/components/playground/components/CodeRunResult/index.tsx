@@ -130,18 +130,18 @@ const CodeRunResult: React.FC<CodeRunResultProps> = (props) => {
         <Col flex="none">
           {data?.executor_pod_name && (
             <Typography.Text copyable={{ text: data?.executor_pod_name }}>
-              执行节点：
+              Execution Node
               {data?.executor_pod_name}
             </Typography.Text>
           )}
         </Col>
       </Row>
       {renderResponse({
-        title: "编译",
+        title: "Compile",
         ...data?.compile_result,
         wrapperStyle: { marginBottom: 12 },
       })}
-      {renderResponse({ title: `运行`, ...data?.run_result })}
+      {renderResponse({ title: `Run`, ...data?.run_result })}
     </div>
   );
 

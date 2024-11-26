@@ -1,15 +1,15 @@
-import React, { useEffect, useState, CSSProperties } from 'react';
+import React, { useEffect, useState, CSSProperties } from "react";
 
-import { Popover, Tooltip, Typography, Grid } from '@arco-design/web-react';
-import { IconCopy, IconCheckCircleFill } from '@arco-design/web-react/icon';
+import { Popover, Tooltip, Typography, Grid } from "@arco-design/web-react";
+import { IconCopy, IconCheckCircleFill } from "@arco-design/web-react/icon";
 
-import css from './index.module.less';
+import css from "./index.module.less";
 
 const { Row } = Grid;
 type Props = {
   iconText?: string; // 自定义icon按钮显示文案
   text?: string | (() => string);
-  type?: 'tooltip' | 'popover';
+  type?: "tooltip" | "popover";
   afterOperate?: () => void; // 细化操作
   children?: React.ReactNode;
   style?: CSSProperties;
@@ -26,12 +26,12 @@ export const CopyIcon: React.FC<Props> = ({
   text,
   style,
   className,
-  type = 'tooltip',
+  type = "tooltip",
   afterOperate,
   children,
   extraProps = {},
-  copyTip = `复制`,
-  copyDoneTip = `已复制`,
+  copyTip = `Copy`,
+  copyDoneTip = `Copied`,
   showCopyText = true,
   iconStyle,
 }) => {
@@ -41,7 +41,7 @@ export const CopyIcon: React.FC<Props> = ({
   };
 
   const onCopy = () => {
-    const copyText = typeof text === 'function' ? text() : text;
+    const copyText = typeof text === "function" ? text() : text;
     copy(copyText || (children as string));
     setCopied(true);
     afterOperate?.();
@@ -52,13 +52,23 @@ export const CopyIcon: React.FC<Props> = ({
       <Tooltip content={content} style={{ zIndex: 1200 }} {...extraProps}>
         {_copied ? (
           <Row justify="center" align="center">
-            <IconCheckCircleFill style={{ color: '#00aa2a', fontSize: '14px' }} />{' '}
-            {showCopyText && <Typography className={css.copyText}>{iconText || `复制`}</Typography>}
+            <IconCheckCircleFill
+              style={{ color: "#00aa2a", fontSize: "14px" }}
+            />{" "}
+            {showCopyText && (
+              <Typography className={css.copyText}>
+                {iconText || `Copy`}
+              </Typography>
+            )}
           </Row>
         ) : (
           <Row justify="center" align="center" onClick={onCopy}>
             <IconCopy className={css.copyIcon} style={iconStyle} />
-            {showCopyText && <Typography className={css.copyText}>{iconText || `复制`}</Typography>}
+            {showCopyText && (
+              <Typography className={css.copyText}>
+                {iconText || `Copy`}
+              </Typography>
+            )}
           </Row>
         )}
       </Tooltip>
@@ -68,13 +78,23 @@ export const CopyIcon: React.FC<Props> = ({
       <Popover content={content} style={{ zIndex: 1200 }} {...extraProps}>
         {_copied ? (
           <Row justify="center" align="center">
-            <IconCheckCircleFill style={{ color: '#00aa2a', fontSize: '14px' }} />{' '}
-            {showCopyText && <Typography className={css.copyText}>{iconText || `复制`}</Typography>}
+            <IconCheckCircleFill
+              style={{ color: "#00aa2a", fontSize: "14px" }}
+            />{" "}
+            {showCopyText && (
+              <Typography className={css.copyText}>
+                {iconText || `Copy`}
+              </Typography>
+            )}
           </Row>
         ) : (
           <Row justify="center" align="center" onClick={onCopy}>
             <IconCopy className={css.copyIcon} style={iconStyle} />
-            {showCopyText && <Typography className={css.copyText}>{iconText || `复制`}</Typography>}
+            {showCopyText && (
+              <Typography className={css.copyText}>
+                {iconText || `Copy`}
+              </Typography>
+            )}
           </Row>
         )}
       </Popover>
@@ -91,7 +111,9 @@ export const CopyIcon: React.FC<Props> = ({
 
   return (
     <span style={style} className={className}>
-      {copied ? TypeMap[type](copyDoneTip, true) : TypeMap[type](copyTip, false)}
+      {copied
+        ? TypeMap[type](copyDoneTip, true)
+        : TypeMap[type](copyTip, false)}
     </span>
   );
 };

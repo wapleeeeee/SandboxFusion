@@ -76,6 +76,15 @@ const OnlineJudge: React.FC = () => {
     }
   };
 
+  const setConfigDatasetTypeProvided = (obj: Record<string, any>) => {
+    setConfig(
+      getFormatJson({
+        ...getConfigJson(),
+        ...obj,
+      }) as string
+    );
+  };
+
   const {
     data: datasets,
     loading: listDatasetsLoading,
@@ -103,12 +112,10 @@ const OnlineJudge: React.FC = () => {
       onSuccess: (res) => {
         if (res.length) {
           setId("0");
-          setConfig(
-            getFormatJson({
-              dataset_type: getCurrentDatasetType(),
-              provided_data: res?.[0]?.row,
-            }) as string
-          );
+          setConfigDatasetTypeProvided({
+            dataset_type: getCurrentDatasetType(),
+            provided_data: res?.[0]?.row,
+          });
         }
       },
     }
@@ -175,16 +182,14 @@ const OnlineJudge: React.FC = () => {
             <Space>
               <Select
                 style={{ width: 190 }}
-                prefix={`题库`}
+                prefix={`Dataset`}
                 value={dataset}
                 onChange={(val) => {
                   setDataset(val);
                   setId(undefined);
-                  setConfig(
-                    getFormatJson({
-                      dataset_type: getCurrentDatasetType(val),
-                    }) as string
-                  );
+                  setConfigDatasetTypeProvided({
+                    dataset_type: getCurrentDatasetType(val),
+                  });
                 }}
                 options={datasets?.map((item) => ({
                   label: item.id,
@@ -199,18 +204,15 @@ const OnlineJudge: React.FC = () => {
               <Select
                 allowCreate
                 style={{ width: 190 }}
-                prefix={`题号`}
+                prefix={"Id"}
                 disabled={!dataset}
-                placeholder={dataset ? `请选择` : `请先选择题库`}
                 value={id}
                 onChange={(id) => {
                   setId(id);
-                  setConfig(
-                    getFormatJson({
-                      dataset_type: getCurrentDatasetType(),
-                      provided_data: questionIdList?.[Number(id)]?.row,
-                    }) as string
-                  );
+                  setConfigDatasetTypeProvided({
+                    dataset_type: getCurrentDatasetType(),
+                    provided_data: questionIdList?.[Number(id)]?.row,
+                  });
                 }}
                 options={questionIdList?.map((item, index) => ({
                   label: `${index + 1}`,
@@ -250,7 +252,7 @@ const OnlineJudge: React.FC = () => {
             onChange={(val) => setRenderType(val as RenderType)}
           >
             <Tabs.TabPane key={RenderType.MARKDOWN} title="Markdown" />
-            <Tabs.TabPane key={RenderType.PLAINTEXT} title={`普通文本`} />
+            <Tabs.TabPane key={RenderType.PLAINTEXT} title={`Text`} />
           </Tabs>
         </Col>
       </Row>
@@ -283,7 +285,7 @@ const OnlineJudge: React.FC = () => {
         <Typography.Title
           heading={6}
           style={{ margin: 0 }}
-        >{`配置`}</Typography.Title>
+        >{`Config`}</Typography.Title>
       </Space>
       <MonacoEditor
         height={300}
@@ -302,9 +304,9 @@ const OnlineJudge: React.FC = () => {
         </Tag>
       )}
       <Tabs type="text" activeTab={resCodeTab} onChange={setResCodeTab}>
-        <Tabs.TabPane key={"extract"} title={`抽取代码`} />
-        <Tabs.TabPane key={"entire"} title={`完整代码`} />
-        <Tabs.TabPane key={"judge"} title={`测试代码`} />
+        <Tabs.TabPane key={"extract"} title={`Extracted Code`} />
+        <Tabs.TabPane key={"entire"} title={`Full Code`} />
+        <Tabs.TabPane key={"judge"} title={`Test Code`} />
       </Tabs>
       <SmartCodeEditor
         language="python"
@@ -326,7 +328,7 @@ const OnlineJudge: React.FC = () => {
         <Typography.Title
           heading={6}
           style={{ margin: 0 }}
-        >{`单例测试`}</Typography.Title>
+        >{`Tests`}</Typography.Title>
       </Space>
       <Tabs
         type="text"

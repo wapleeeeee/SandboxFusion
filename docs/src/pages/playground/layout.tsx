@@ -68,7 +68,7 @@ export default function PlaygroundLayout(props: {
                   history.push(`${baseUrl}/playground/online_judge`)
                 }
               >
-                Online Judge
+                Datasets
               </Menu.Item>
             </Menu>
           </ArcoLayout.Sider>

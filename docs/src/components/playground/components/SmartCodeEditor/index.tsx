@@ -535,7 +535,7 @@ const SmartCodeEditor: FC<ISmartCodeEditorProps> = (props) => {
    * @returns
    */
   const renderCanWordWrap = () => {
-    const text = wordWrapValue ? `恢复折行` : `自动折行`;
+    const text = wordWrapValue ? `Default` : `Word Wrap`;
     return (
       <Row align="center">
         <div>
@@ -600,7 +600,7 @@ const SmartCodeEditor: FC<ISmartCodeEditorProps> = (props) => {
           !_inFullScreen && isFullScreen ? false : fullScreenVisible
         }
         onVisibleChange={setFullScreenVisible}
-        content={isFullScreen ? `关闭全屏` : `展开全屏`}
+        content={isFullScreen ? `Close` : `Fullscreen`}
         style={{ zIndex: 1200 }}
       >
         <div>
@@ -621,7 +621,7 @@ const SmartCodeEditor: FC<ISmartCodeEditorProps> = (props) => {
             <FullScreenIcon style={defaultIconStyle} />
             {!toolbarNoLabel && (
               <Typography.Text style={{ marginLeft: 8, marginRight: 8 }}>
-                {isFullScreen ? `关闭全屏` : `展开全屏`}
+                {isFullScreen ? `Close` : `Fullscreen`}
               </Typography.Text>
             )}
           </Row>
@@ -639,7 +639,7 @@ const SmartCodeEditor: FC<ISmartCodeEditorProps> = (props) => {
       return null;
     }
     return (
-      <Typography.Text type="error">{`${`格式错误, 请输入合法的${currentLanguage}`}`}</Typography.Text>
+      <Typography.Text type="error">{`${`format error, please input valid ${currentLanguage}`}`}</Typography.Text>
     );
   };
 
