@@ -25,7 +25,10 @@ WORKDIR /root/sandbox
 RUN poetry config virtualenvs.create false \
     # TODO: find out why poetry throws error without this
     && touch /root/miniconda3/pyvenv.cfg \
-    && poetry install
+    && poetry install \
+    && cd ./docs \
+    && npm ci \
+    && npm run build
 
 RUN useradd -m app && echo 'app:app' | chpasswd \
     && chmod og+rx /root \
