@@ -13,7 +13,8 @@
 # limitations under the License.
 
 import asyncio
-from typing import List
+import json
+from typing import Any, Dict, List
 
 import structlog
 from fastapi import HTTPException
@@ -136,3 +137,28 @@ async def check_stdio_test_cases_parallel(code: str,
             break
 
     return result
+
+
+def parse_jest_cases(report_data: str) -> List[Dict[str, Any]]:
+    if isinstance(report_data, str):
+        report = json.loads(report_data)
+    else:
+        report = report_data
+
+    test_cases = []
+
+    for test_suite in report['testResults']:
+        file_path = test_suite['testFilePath']
+
+        for test_case in test_suite['testResults']:
+            result = {
+                'passed': test_case['status'] == 'passed',
+                'full_name': test_case['fullName'],
+                'file': file_path,
+                'suite': ' > '.join(test_case['ancestorTitles']),
+                'test': test_case['title'],
+                'failure_messages': test_case['failureMessages']
+            }
+            test_cases.append(result)
+
+    return test_cases

@@ -18,7 +18,7 @@ from contextlib import asynccontextmanager
 
 import structlog
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from sandbox.database import get_databases
@@ -44,30 +44,15 @@ app.mount('/playground',
           StaticFiles(directory=os.path.abspath(os.path.join(__file__, '../../pages')), html=True),
           name='playground')
 
+app = FastAPI(lifespan=lifespan)
+app.mount('/SandboxFusion',
+          StaticFiles(directory=os.path.abspath(os.path.join(__file__, '../../../docs/build')), html=True),
+          name='doc-site')
 
-@app.get("/", response_class=HTMLResponse)
+
+@app.get("/")
 async def root():
-    # redirect to current path + playground
-    return '''
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const currentPath = window.location.pathname;
-            const newPath = currentPath.endsWith('/') ? `${currentPath}playground` : `${currentPath}/playground`;
-            window.location.href = `${window.location.origin}${newPath}`;
-        });
-    </script>
-</head>
-<body>
-    <p>Redirecting to the playground...</p>
-</body>
-</html>
-    '''
+    return RedirectResponse(url="./SandboxFusion", status_code=302)
 
 
 @app.exception_handler(Exception)

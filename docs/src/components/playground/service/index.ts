@@ -12,8 +12,10 @@ import {
   RunCodeResponse,
 } from "../types";
 import { datasets } from "@site/src/constants";
-// https://bytedance.larkoffice.com/wiki/SR7XwD1MGiOwOhkEq0HcbRjHnXe
-const domain = "https://faas-code-sandbox.bytedance.net";
+
+const getDomain = () => {
+  return window.location.origin;
+}
 
 export const onlineJudgeService = {
   // 获取数据集列表
@@ -32,8 +34,8 @@ export const onlineJudgeService = {
   // listDatasets(): Promise<string[]> {
   //   return axios
   //     .request({
-  //       baseURL: domain,
-  //       url: '/online_judge/list_datasets',
+  //       baseURL: getDomain(),
+  //       url: '/list_datasets',
   //       method: 'GET',
   //     })
   //     .then(res => res.data);
@@ -65,8 +67,8 @@ export const onlineJudgeService = {
   // getQuestionIdList(data: QuestionIdListRequest): Promise<string[]> {
   //   return axios
   //     .request({
-  //       baseURL: domain,
-  //       url: "/online_judge/list_ids",
+  //       baseURL: getDomain(),
+  //       url: "/list_ids",
   //       method: "POST",
   //       data,
   //     })
@@ -76,8 +78,8 @@ export const onlineJudgeService = {
   getPromptById(data: PromptByIdRequest): Promise<PromptRes> {
     return axios
       .request({
-        baseURL: domain,
-        url: "/online_judge/get_prompts",
+        baseURL: getDomain(),
+        url: "/get_prompts",
         method: "POST",
         data,
       })
@@ -87,8 +89,8 @@ export const onlineJudgeService = {
   submit(data: OnlineJudgeSubmitRequest): Promise<OnlineJudgeSubmitResponse> {
     return axios
       .request({
-        baseURL: domain,
-        url: "/online_judge/submit",
+        baseURL: getDomain(),
+        url: "/submit",
         method: "POST",
         data,
       })
@@ -101,7 +103,7 @@ export const sandboxService = {
   runCode(data: RunCodeRequest): Promise<RunCodeResponse> {
     return axios
       .request({
-        baseURL: domain,
+        baseURL: getDomain(),
         url: "/run_code",
         method: "POST",
         data,

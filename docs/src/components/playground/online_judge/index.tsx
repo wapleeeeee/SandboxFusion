@@ -135,6 +135,7 @@ const OnlineJudge: React.FC = () => {
       const row = questionIdList?.[Number(id)]?.row;
       return onlineJudgeService.getPromptById({
         config: {
+          ...getConfigJson(),
           provided_data: [row],
           dataset_type: getCurrentDatasetType(),
         },

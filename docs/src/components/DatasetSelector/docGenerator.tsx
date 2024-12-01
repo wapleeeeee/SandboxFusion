@@ -23,7 +23,7 @@ data = list(${load_stmt})
 
 config['provided_data'] = data
 prompts = requests.post('${constants.host}/get_prompts', json={
-  'dataset': '${selectedDataset.id}',
+  'dataset': '${selectedDataset.dataset}',
   'config': config
 })`}
       </CodeBlock>
@@ -33,7 +33,7 @@ prompts = requests.post('${constants.host}/get_prompts', json={
       <CodeBlock language="python">
         {`config['provided_data'] = data[0]
 res = requests.post('${constants.host}/submit', json={
-  'dataset': '${selectedDataset.id}',
+  'dataset': '${selectedDataset.dataset}',
   'id': data[0]['id'],
   'completion': completion,
   'config': config

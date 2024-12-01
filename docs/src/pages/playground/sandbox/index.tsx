@@ -1,9 +1,14 @@
 import React from "react";
 import SandboxPage from "../../../components/playground/sandbox";
-import PlaygroundLayout from "../layout";
+import PlaygroundLayout from "../../../components/playground/components/layout";
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 const Sandbox: React.FC = () => {
-  return <PlaygroundLayout Children={SandboxPage} />;
+  return (
+    <BrowserOnly>
+      {() => <PlaygroundLayout Children={SandboxPage} />}
+    </BrowserOnly>
+  );
 };
 
 Sandbox.displayName = "Sandbox";

@@ -36,6 +36,7 @@ from sandbox.datasets.types import (
 from sandbox.utils.common import ensure_json, generate_random_string
 from sandbox.utils.extraction import extract_code_from_freeform_completion
 from sandbox.utils.sandbox_client import run_code_in_sandbox
+from sandbox.utils.testing import parse_jest_cases
 
 
 class ExtractCodeMode(Enum):
@@ -155,7 +156,7 @@ class AutoEvalDataset(CodingDataset):
             asset = json.loads(asset)
         else:
             asset = {}
-
+        fetch_files = []
         extract_code_mode = request.config.extra.get('autoeval_extract_code_mode',
                                                      ExtractCodeMode.FIRST_BLOCK_ONLY.value)
         assert ExtractCodeMode.is_valid(extract_code_mode), f'Invalid autoeval_extract_code_mode: {extract_code_mode}'
@@ -176,14 +177,17 @@ class AutoEvalDataset(CodingDataset):
                 full_code += f'// {f}\n\n{decoded_code}\n\n'
 
             result = await run_code_in_sandbox(
-                RunCodeRequest(code='',
-                               language='junit',
-                               compile_timeout=request.config.compile_timeout or 40,
-                               run_timeout=request.config.run_timeout or 20,
-                               files={
-                                   **asset,
-                                   **files
-                               }))
+                RunCodeRequest(
+                    code='',
+                    language='junit',
+                    compile_timeout=request.config.compile_timeout or 40,
+                    run_timeout=request.config.run_timeout or 20,
+                    files={
+                        **asset,
+                        **files
+                    },
+                    fetch_files=fetch_files,
+                ))
         else:
             code, _ = extract_code_from_freeform_completion(request.completion,
                                                             programming_language,
@@ -199,6 +203,9 @@ class AutoEvalDataset(CodingDataset):
             else:
                 full_code = append_test(code, row['test']['code'], repr_code)
 
+            if execution_language == 'jest':
+                fetch_files.append('jest-report.json')
+
             full_code = postprocess_full_code(full_code, execution_language)
 
             if append_flag:
@@ -212,6 +219,7 @@ class AutoEvalDataset(CodingDataset):
                     compile_timeout=request.config.compile_timeout or 40,
                     run_timeout=request.config.run_timeout or 20,
                     files=asset,
+                    fetch_files=fetch_files,
                 ))
 
         accepted = result.status == RunStatus.Success
@@ -219,11 +227,19 @@ class AutoEvalDataset(CodingDataset):
         if append_flag and flag not in result.run_result.stdout:
             accepted = False
 
-        return EvalResult(id=request.id,
-                          accepted=accepted,
-                          extracted_code=code,
-                          full_code=full_code,
-                          tests=[EvalTestCase(
-                              passed=accepted,
-                              exec_info=result,
-                          )])
+        extra_result = {}
+        if execution_language == 'jest' and 'jest-report.json' in result.files:
+            extra_result['jest_cases'] = parse_jest_cases(
+                base64.b64decode(result.files['jest-report.json']).decode('utf-8'))
+
+        return EvalResult(
+            id=request.id,
+            accepted=accepted,
+            extracted_code=code,
+            full_code=full_code,
+            tests=[EvalTestCase(
+                passed=accepted,
+                exec_info=result,
+            )],
+            extra=extra_result,
+        )

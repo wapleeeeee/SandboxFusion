@@ -146,6 +146,17 @@ const DatasetSelector: React.FC<DatasetSelectorProps> = ({ datasetKey, generateD
               <MenuItem value="ALL_BLOCKS">All Blocks</MenuItem>
             </Select>
           );
+        } else if (field.name === 'extra.mode') {
+          return (
+            <RadioGroup
+              value={value}
+              onChange={(e) => handleConfigChange(field.name, e.target.value)}
+              row
+            >
+              <FormControlLabel value="input" control={<Radio />} label="input" />
+              <FormControlLabel value="output" control={<Radio />} label="output" />
+            </RadioGroup>
+          );
         }
         return null;
       case 'text':
@@ -172,7 +183,9 @@ const DatasetSelector: React.FC<DatasetSelectorProps> = ({ datasetKey, generateD
   return (
     <>
       {datasets.length > 1 && <>
-        <Heading as="h2">Subset Selection</Heading>
+        <header>
+          <Heading as="h2">Subset Selection</Heading>
+        </header>
         <FormControl component="fieldset">
           <RadioGroup
             value={selectedDataset.id}
@@ -185,8 +198,9 @@ const DatasetSelector: React.FC<DatasetSelectorProps> = ({ datasetKey, generateD
         </FormControl>
       </>}
 
-
-      <Heading as="h2">Configuration</Heading>
+      <header>
+        <Heading as="h2">Configuration</Heading>
+      </header>
       <TableContainer component={Paper} sx={{ mb: 3 }}>
         <Table>
           <TableHead>
@@ -208,7 +222,9 @@ const DatasetSelector: React.FC<DatasetSelectorProps> = ({ datasetKey, generateD
         </Table>
       </TableContainer>
 
-      <Heading as="h2">Usage</Heading>
+      <header>
+        <Heading as="h2">Usage</Heading>
+      </header>
       {generateDocFunc({
         selectedDataset,
         datasetType,
