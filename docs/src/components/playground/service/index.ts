@@ -14,6 +14,9 @@ import {
 import { datasets } from "@site/src/constants";
 
 const getDomain = () => {
+  if (window.location.origin.includes('bytedance.github.io')) {
+    return 'https://bytedance-sandboxfusion.hf.space'
+  }
   return window.location.origin;
 }
 

@@ -18,7 +18,7 @@ from contextlib import asynccontextmanager
 
 import structlog
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from sandbox.database import get_databases
@@ -50,9 +50,33 @@ app.mount('/SandboxFusion',
           name='doc-site')
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    return RedirectResponse(url="./SandboxFusion", status_code=302)
+    # redirect to current path + playground
+    return '''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentPath = window.location.pathname;
+            const newPath = currentPath.endsWith('/') ? `${currentPath}SandboxFusion` : `${currentPath}/SandboxFusion`;
+            let newUrl = `${window.location.origin}${newPath}`;
+            if (newUrl.includes('hf.space') || newUrl.includes('huggingface.co')) {
+                newUrl = newUrl.replace(/http:\/\//g, 'https://');
+            }
+            window.location.href = newUrl;
+        });
+    </script>
+</head>
+<body>
+    <p>Redirecting to the playground...</p>
+</body>
+</html>
+    '''
 
 
 @app.exception_handler(Exception)

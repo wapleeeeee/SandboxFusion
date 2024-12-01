@@ -1,5 +1,5 @@
 ---
-sidebar_position: 7
+sidebar_position: 8
 ---
 import DatasetSelector from '@site/src/components/DatasetSelector';
 import { docWithType } from '@site/src/components/DatasetSelector/docGenerator';
@@ -11,7 +11,10 @@ The miniF2F dataset was released by openai in [MiniF2F: a cross-system benchmark
 Both test set and valid set are released with 244 problems each.
 
 <DatasetSelector datasetKey="MiniF2F" generateDocFunc={docWithType} configFields={[
+  { name: 'prompt_template', type: 'input', description: 'All the {xxx} in the template will be filled by the corresponding column in the samples' },
+  { name: 'locale', type: 'select', description: 'Locale of prompts' },
   { name: 'run_timeout', type: 'number', description: 'Execution timeout in seconds' },
 ]} initialConfig={{
-  run_timeout: 20,
+  locale: 'en',
+  run_timeout: 40,
 }} />

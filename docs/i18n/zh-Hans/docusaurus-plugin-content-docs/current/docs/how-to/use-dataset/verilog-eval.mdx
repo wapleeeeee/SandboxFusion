@@ -1,17 +1,17 @@
 ---
-sidebar_position: 7
+sidebar_position: 12
 ---
 import DatasetSelector from '@site/src/components/DatasetSelector';
 import { docWithType } from '@site/src/components/DatasetSelector/docGenerator';
 
-# LeetCode
+# VerilogEval
 
-This is a small sample of LeetCode problems, demonstrating how you can test LeetCode problems on the Sandbox. Users need to collect more data themselves.
+This is an implementation of [VerilogEval: Evaluating Large Language Models for Verilog Code Generation](https://arxiv.org/abs/2309.07544). Both human and machine subsets are implementated.
 
-<DatasetSelector datasetKey="AutoEval" generateDocFunc={docWithType} configFields={[
+<DatasetSelector datasetKey="VerilogEval" generateDocFunc={docWithType} configFields={[
   { name: 'compile_timeout', type: 'number', description: 'Compilation timeout in seconds' },
   { name: 'run_timeout', type: 'number', description: 'Execution timeout in seconds' },
 ]} initialConfig={{
-  compile_timeout: 40,
-  run_timeout: 20,
+  compile_timeout: 60,
+  run_timeout: 30,
 }} />
