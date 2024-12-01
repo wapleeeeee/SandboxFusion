@@ -770,7 +770,7 @@ export const datasets = {
 };
 
 export const constants = {
-  image: "volcengine/sandbox-fusion:20241104",
+  image: "volcengine/sandbox-fusion:server-20241202",
   host: "http://localhost:8080",
   datasets,
 };
