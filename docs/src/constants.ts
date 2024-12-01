@@ -1,4 +1,27 @@
 export const datasets = {
+  FullStackBench: {
+    datasetType: "AutoEvalDataset",
+    datasets: [
+      {
+        id: "full_stack_bench_zh",
+        dataset: "full_stack_bench_zh",
+        huggingFace: {
+          id: "ByteDance/FullStackBench",
+          subset: "zh",
+          split: "test",
+        },
+      },
+      {
+        id: "full_stack_bench_en",
+        dataset: "full_stack_bench_en",
+        huggingFace: {
+          id: "ByteDance/FullStackBench",
+          subset: "en",
+          split: "test",
+        },
+      },
+    ],
+  },
   AutoEval: {
     datasetType: "AutoEvalDataset",
     datasets: [
