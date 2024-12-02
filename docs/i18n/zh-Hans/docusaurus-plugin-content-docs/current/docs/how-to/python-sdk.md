@@ -131,3 +131,42 @@ submit_safe(SubmitRequest(...))
 - 请求数据结构：`SubmitRequest`
 - 响应数据结构：`EvalResult`
 - 默认重试次数：5
+
+## 异步接口
+
+所有现有接口都实现了异步版本，在对应的函数后面添加 _async 即可导入。
+
+## 并发请求
+
+沙盒提供了并发请求的工具，可以方便地批量执行某个函数操作。
+
+下面是一个并发运行代码的例子：
+
+```python
+from sandbox_fusion import set_sandbox_endpoint, run_concurrent, run_code, RunCodeRequest
+set_sandbox_endpoint('https://faas-code-sandbox.bytedance.net/')
+
+codes = [f'print({i})' for i in range(123, 456)]
+results = run_concurrent(run_code, args=[[RunCodeRequest(code=c, language='python')] for c in codes])
+```
+
+参考上文的接口即可替换成其它函数。
+
+## 超时设置
+
+客户端对较为耗时的函数了增加了超时设置能力，同步和异步版本都可用。 这些函数包括：
+
+- `submit`
+- `run_code`
+- `run_jupyter`
+
+，参数为 `client_timeout` ，一个例子：
+
+```python
+from sandbox_fusion import run_code, RunCodeRequest
+
+print(
+    run_code(RunCodeRequest(code='import time; time.sleep(4); print(123)', language='python'),
+             max_attempts=1,
+             client_timeout=3))
+```

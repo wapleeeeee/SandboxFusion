@@ -40,7 +40,7 @@ get_prompt_by_id(GetPromptByIdRequest(...), endpoint="http://your-api-endpoint.c
 
 Note: If the `endpoint` parameter is specified in a function call, it will override the globally set endpoint.
 
-## Functions and Corresponding Data Structures
+## APIs
 
 All HTTP APIs have a corresponding function that accepts a data structure with the same name as the API. For specific API semantics, please refer to the HTTP API documentation.
 
@@ -131,3 +131,42 @@ submit_safe(SubmitRequest(...))
 - Request data structure: `SubmitRequest`
 - Response data structure: `EvalResult`
 - Default retry count: 5
+
+## Asynchronous Interface
+
+All existing interfaces have asynchronous versions implemented, which can be imported by adding _async to the corresponding function name.
+
+## Concurrent Requests
+
+The sandbox provides tools for concurrent requests, allowing convenient batch execution of certain function operations.
+
+Here's an example of running code concurrently:
+
+```python
+from sandbox_fusion import set_sandbox_endpoint, run_concurrent, run_code, RunCodeRequest
+set_sandbox_endpoint('https://faas-code-sandbox.bytedance.net/')
+
+codes = [f'print({i})' for i in range(123, 456)]
+results = run_concurrent(run_code, args=[[RunCodeRequest(code=c, language='python')] for c in codes])
+```
+
+You can replace with other functions by referring to the interfaces above.
+
+## Timeout Settings
+
+The package has added timeout configuration capabilities for time-consuming functions, available for both synchronous and asynchronous versions. These functions include:
+
+- submit
+- run_code
+- run_jupyter
+
+The parameter is `client_timeout`. Here's an example:
+
+```python
+from sandbox_fusion import run_code, RunCodeRequest
+
+print(
+    run_code(RunCodeRequest(code='import time; time.sleep(4); print(123)', language='python'),
+             max_attempts=1,
+             client_timeout=3))
+```

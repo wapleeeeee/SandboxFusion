@@ -794,6 +794,7 @@ export const datasets = {
 
 export const constants = {
   image: "volcengine/sandbox-fusion:server-20241202",
+  cnImage: "vemlp-cn-beijing.cr.volces.com/preset-images/code-sandbox:server-20241202",
   host: "http://localhost:8080",
   datasets,
 };
