@@ -63,9 +63,9 @@ export default function PlaygroundLayout(props: {
                 Sandbox
               </Menu.Item>
               <Menu.Item
-                key="online_judge"
+                key="datasets"
                 onClick={() =>
-                  history.push(`${baseUrl}/playground/online_judge`)
+                  history.push(`${baseUrl}/playground/datasets`)
                 }
               >
                 Datasets

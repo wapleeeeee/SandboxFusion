@@ -11,6 +11,6 @@ const OnlineJudge: React.FC = () => {
   );
 };
 
-OnlineJudge.displayName = "OnlineJudge";
+OnlineJudge.displayName = "Datasets";
 
 export default React.memo(OnlineJudge);
