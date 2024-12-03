@@ -143,6 +143,7 @@ limitations under the License.
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/liuq901"><img src="https://avatars.githubusercontent.com/u/4028828?v=4?s=100" width="100px;" alt="Qi Liu"/><br /><sub><b>Qi Liu</b></sub></a><br /><a href="#code-liuq901" title="Code">💻</a> <a href="#data-liuq901" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/BytedSS0"><img src="https://avatars.githubusercontent.com/u/186129147?v=4?s=100" width="100px;" alt="Shulin.Xin"/><br /><sub><b>Shulin.Xin</b></sub></a><br /><a href="#data-BytedSS0" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ssine"><img src="https://avatars.githubusercontent.com/u/20841764?v=4?s=100" width="100px;" alt="sine"/><br /><sub><b>sine</b></sub></a><br /><a href="#design-ssine" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>
