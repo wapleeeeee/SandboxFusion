@@ -26,6 +26,15 @@
       "contributions": [
         "data"
       ]
+    },
+    {
+      "login": "ssine",
+      "name": "sine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20841764?v=4",
+      "profile": "https://github.com/ssine",
+      "contributions": [
+        "design"
+      ]
     }
   ]
 }
