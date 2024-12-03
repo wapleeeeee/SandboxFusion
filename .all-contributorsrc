@@ -35,6 +35,16 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "cattaria",
+      "name": "可爱猫猫是梓喵",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10678783?v=4",
+      "profile": "https://github.com/cattaria",
+      "contributions": [
+        "code",
+        "data"
+      ]
     }
   ]
 }
