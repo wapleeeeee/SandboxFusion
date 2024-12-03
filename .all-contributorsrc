@@ -1,4 +1,22 @@
 {
   "projectName": "SandboxFusion",
-  "projectOwner": "bytedance"
+  "projectOwner": "bytedance",
+  "files": [
+    "README.md"
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "contributors": [
+    {
+      "login": "liuq901",
+      "name": "Qi Liu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4028828?v=4",
+      "profile": "https://github.com/liuq901",
+      "contributions": [
+        "code",
+        "data"
+      ]
+    }
+  ]
 }
