@@ -45,6 +45,15 @@
         "code",
         "data"
       ]
+    },
+    {
+      "login": "lseven-rs",
+      "name": "Xingwen Li",
+      "avatar_url": "https://avatars.githubusercontent.com/u/189442484?v=4",
+      "profile": "https://github.com/lseven-rs",
+      "contributions": [
+        "design"
+      ]
     }
   ]
 }
