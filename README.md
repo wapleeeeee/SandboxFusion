@@ -147,6 +147,7 @@ limitations under the License.
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/cattaria"><img src="https://avatars.githubusercontent.com/u/10678783?v=4?s=100" width="100px;" alt="可爱猫猫是梓喵"/><br /><sub><b>可爱猫猫是梓喵</b></sub></a><br /><a href="#code-cattaria" title="Code">💻</a> <a href="#data-cattaria" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lseven-rs"><img src="https://avatars.githubusercontent.com/u/189442484?v=4?s=100" width="100px;" alt="Xingwen Li"/><br /><sub><b>Xingwen Li</b></sub></a><br /><a href="#design-lseven-rs" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/aoyanli"><img src="https://avatars.githubusercontent.com/u/186133689?v=4?s=100" width="100px;" alt="aoyanli"/><br /><sub><b>aoyanli</b></sub></a><br /><a href="#code-aoyanli" title="Code">💻</a> <a href="#data-aoyanli" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://magic3007.github.io"><img src="https://avatars.githubusercontent.com/u/30785720?v=4?s=100" width="100px;" alt="Magic Mai"/><br /><sub><b>Magic Mai</b></sub></a><br /><a href="#code-magic3007" title="Code">💻</a> <a href="#data-magic3007" title="Data">🔣</a></td>
     </tr>
   </tbody>
 </table>
