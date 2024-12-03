@@ -145,6 +145,7 @@ limitations under the License.
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/BytedSS0"><img src="https://avatars.githubusercontent.com/u/186129147?v=4?s=100" width="100px;" alt="Shulin.Xin"/><br /><sub><b>Shulin.Xin</b></sub></a><br /><a href="#data-BytedSS0" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ssine"><img src="https://avatars.githubusercontent.com/u/20841764?v=4?s=100" width="100px;" alt="sine"/><br /><sub><b>sine</b></sub></a><br /><a href="#design-ssine" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/cattaria"><img src="https://avatars.githubusercontent.com/u/10678783?v=4?s=100" width="100px;" alt="可爱猫猫是梓喵"/><br /><sub><b>可爱猫猫是梓喵</b></sub></a><br /><a href="#code-cattaria" title="Code">💻</a> <a href="#data-cattaria" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lseven-rs"><img src="https://avatars.githubusercontent.com/u/189442484?v=4?s=100" width="100px;" alt="Xingwen Li"/><br /><sub><b>Xingwen Li</b></sub></a><br /><a href="#design-lseven-rs" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>
