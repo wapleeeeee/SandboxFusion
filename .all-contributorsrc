@@ -9,6 +9,15 @@
   "contributorsPerLine": 7,
   "contributors": [
     {
+      "login": "ssine",
+      "name": "sine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20841764?v=4",
+      "profile": "https://github.com/ssine",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
       "login": "liuq901",
       "name": "Qi Liu",
       "avatar_url": "https://avatars.githubusercontent.com/u/4028828?v=4",
@@ -25,15 +34,6 @@
       "profile": "https://github.com/BytedSS0",
       "contributions": [
         "data"
-      ]
-    },
-    {
-      "login": "ssine",
-      "name": "sine",
-      "avatar_url": "https://avatars.githubusercontent.com/u/20841764?v=4",
-      "profile": "https://github.com/ssine",
-      "contributions": [
-        "design"
       ]
     },
     {
