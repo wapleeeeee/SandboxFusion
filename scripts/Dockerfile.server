@@ -1,4 +1,4 @@
-FROM volcengine/sandbox-fusion:base-ubuntu20-py3.11-go1.21-node20.11-jdk21-dotnet8.0-php7-rust1.76-etc
+FROM vemlp-cn-beijing.cr.volces.com/preset-images/code-sandbox:base-20241118
 
 COPY ./runtime/go ./runtime/go
 # download and cache go deps
@@ -13,6 +13,10 @@ RUN cd /root/sandbox/runtime/node && npm ci && \
 
 # cache dotnet
 RUN dotnet new console -o /tmp/dotnet && dotnet run --project /tmp/dotnet
+
+# cache lean
+COPY ./runtime/lean /root/sandbox/runtime/lean
+RUN cd /root/sandbox/runtime/lean && lake build
 
 COPY ./runtime/python ./runtime/python
 RUN cd ./runtime/python && bash install-python-runtime.sh
