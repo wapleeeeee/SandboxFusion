@@ -9,9 +9,6 @@ export const docWithType = ({ selectedDataset, datasetType, config, generatePyth
     load_stmt = `load_dataset("${selectedDataset.huggingFace.id}", "${selectedDataset.huggingFace.subset}", split="${selectedDataset.huggingFace.split}")`
   }
   return <>
-    <p>
-      Get prompts:
-    </p>
     <CodeBlock language="python">
       {`from datasets import load_dataset
 import requests
