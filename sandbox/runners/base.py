@@ -163,8 +163,10 @@ async def run_commands(compile_command: Optional[str], run_command: str, cwd: st
             return CodeRunResult(compile_result=compile_res, run_result=run_res, files=files)
 
 
-def restore_files(dir: str, files: Dict[str, str]):
+def restore_files(dir: str, files: Dict[str, Optional[str]]):
     for filename, content in files.items():
+        if not isinstance(content, str):
+            continue
         if "IGNORE_THIS_FILE" in filename:
             continue
         filepath = os.path.join(dir, filename)

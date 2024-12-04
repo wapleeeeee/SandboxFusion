@@ -94,3 +94,11 @@ async def test_utils_jest_report():
     ctr = Counter([case['passed'] for case in cases])
     assert ctr[True] == 9
     assert ctr[False] == 2
+
+
+async def test_compatibility_with_null_asset():
+    request = RunCodeRequest(code='print(123)', language='python', files={'a.txt': None})
+    response = client.post('/run_code', json=request.model_dump())
+    assert response.status_code == 200
+    result = RunCodeResponse(**response.json())
+    assert result.run_result.stdout == '123\n'
