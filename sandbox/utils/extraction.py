@@ -202,6 +202,24 @@ def default_extract_helper(completion: str, language: NullableLang = '', custom_
     return code_blocks[0].code
 
 
+def remove_entripoints(code, language: NullableLang = ''):
+    if language == 'python':
+        if 'if __name__ == \"__main__\":' in code:
+            next_line = code.index('if __name__ == \"__main__\":')
+            code = code[:next_line].strip()
+    elif language == 'cpp':
+        if 'int main()' in code:
+            next_line = code.index('int main()')
+            code = code[:next_line].strip()
+    elif language == 'go':
+        # Remove package main
+        code = code.replace('package main', '')
+    if '# Example usage' in code:
+        next_line = code.index('# Example usage')
+        code = code[:next_line].strip()
+    return code
+
+
 # compatible function for evals/evals/elsuite/utils/coding_evaluation/utils_coding/extract_code_from_freeform_completion
 def extract_code_from_freeform_completion(completion: str,
                                           language: NullableLang = '',

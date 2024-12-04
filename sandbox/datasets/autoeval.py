@@ -15,7 +15,6 @@
 import base64
 import json
 import re
-from enum import Enum
 from string import Template
 from typing import Any, Dict, List
 
@@ -34,20 +33,9 @@ from sandbox.datasets.types import (
     TestConfig,
 )
 from sandbox.utils.common import ensure_json, generate_random_string
-from sandbox.utils.extraction import extract_code_from_freeform_completion
+from sandbox.utils.extraction import default_extract_helper, remove_entripoints
 from sandbox.utils.sandbox_client import run_code_in_sandbox
 from sandbox.utils.testing import parse_jest_cases
-
-
-class ExtractCodeMode(Enum):
-    """ Extract code mode.
-    """
-    FIRST_BLOCK_ONLY = 'first'
-    MERGE_ALL_BLOCKS = 'all'
-
-    @classmethod
-    def is_valid(cls, value) -> bool:
-        return value in [e.value for e in cls]
 
 
 def append_test(code: str, test: str, repr_code=False):
@@ -157,10 +145,6 @@ class AutoEvalDataset(CodingDataset):
         else:
             asset = {}
         fetch_files = []
-        extract_code_mode = request.config.extra.get('autoeval_extract_code_mode',
-                                                     ExtractCodeMode.FIRST_BLOCK_ONLY.value)
-        assert ExtractCodeMode.is_valid(extract_code_mode), f'Invalid autoeval_extract_code_mode: {extract_code_mode}'
-        first_block_only = extract_code_mode == ExtractCodeMode.FIRST_BLOCK_ONLY.value
         programming_language = row['labels']['programming_language']
         execution_language = row['labels'].get('execution_language', programming_language)
         append_flag = request.config.extra.get('append_flag') and execution_language == 'python'
@@ -189,10 +173,8 @@ class AutoEvalDataset(CodingDataset):
                     fetch_files=fetch_files,
                 ))
         else:
-            code, _ = extract_code_from_freeform_completion(request.completion,
-                                                            programming_language,
-                                                            first_block_only,
-                                                            code_block_idx=request.config.extra.get('code_block_idx'))
+            code = default_extract_helper(request.completion, programming_language)
+            code = remove_entripoints(code, programming_language)
 
             repr_code = request.config.extra.get('repr_code', False)
 

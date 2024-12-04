@@ -66,7 +66,7 @@ async def root():
             const newPath = currentPath.endsWith('/') ? `${currentPath}SandboxFusion` : `${currentPath}/SandboxFusion`;
             let newUrl = `${window.location.origin}${newPath}`;
             if (newUrl.includes('hf.space') || newUrl.includes('huggingface.co')) {
-                newUrl = newUrl.replace(/http:\/\//g, 'https://');
+                newUrl = newUrl.replace(/http:\\/\\//g, 'https://');
             }
             window.location.href = newUrl;
         });
