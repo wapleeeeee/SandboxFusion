@@ -32,7 +32,7 @@ def get_pydantic_requirement():
 
 setup(
     name="sandbox_fusion",
-    version="0.2.0",
+    version="0.3.4",
     packages=find_packages(),
     install_requires=[
         "requests>=2.0.0",

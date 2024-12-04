@@ -118,7 +118,7 @@ class RunCodeRequest(BaseModel):
     code: str = Field(..., examples=['print("hello")'], description='the code to run')
     stdin: Optional[str] = Field(None, examples=[''], description='optional string to pass into stdin')
     language: Language = Field(..., examples=['python'], description='the language or execution mode to run the code')
-    files: Dict[str, str] = Field({}, description='a dict from file path to base64 encoded file content')
+    files: Dict[str, Optional[str]] = Field({}, description='a dict from file path to base64 encoded file content')
     fetch_files: List[str] = Field([], description='a list of file paths to fetch after code execution')
 
 
