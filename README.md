@@ -65,7 +65,7 @@ Jupyter mode kernels:
 Build the image locally:
 
 ```bash
-docker build -f ./scripts/Dockerfile.base -t code_sandbox:base
+docker build -f ./scripts/Dockerfile.base -t code_sandbox:base .
 # change the base image in Dockerfile.server
 sed -i '1s/.*/FROM code_sandbox:base/' ./scripts/Dockerfile.server
 docker build -f ./scripts/Dockerfile.server -t code_sandbox:server
@@ -82,11 +82,18 @@ To install the sandbox service:
 conda create -n sandbox -y python=3.12
 conda activate sandbox
 poetry install
+# to build the real docs, run `cd docs && npm ci && npm run build`
+mkdir -p docs/build
 make run-online
 ```
 
 Please refer to `scripts/Dockerfile.base` for the runtime of each supported language, and `scripts/Dockerfile.server` for the installation of extra packages for python and nodejs.
 
+For example, if you want to support execution of python code, you should install `install-python-runtime.sh`
+```bash
+cd runtime/python
+bash install-python-runtime.sh
+```
 ### Dev & Test
 
 Refer to installation section for the setup of development environment.
