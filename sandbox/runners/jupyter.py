@@ -57,10 +57,6 @@ async def run_jupyter(args: RunJupyterRequest) -> RunJupyterResult:
                                                 fetch_files=args.fetch_files + ['tmp/sandbox/configs/output.json']),
                                     netns_no_bridge=True)
 
-        # online code interpreter's data path is /mnt, clean it up
-        await asyncio.to_thread(shutil.rmtree, '/mnt')
-        os.makedirs('/mnt')
-
         if driver.run_result.status != CommandRunStatus.Finished:
             return RunJupyterResult(status=CommandRunStatus.Error, driver=driver.run_result)
         if 'tmp/sandbox/configs/output.json' not in driver.files:
